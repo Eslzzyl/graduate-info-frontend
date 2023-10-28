@@ -1,53 +1,7 @@
-# default
+## 高校毕业生去向信息共享系统 前端部分
 
-## Project setup
+这是项目正处于开发当中。
 
-```
-# yarn
-yarn
+技术栈：Vue3+Vuetify3
 
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# bun
-bun install
-```
-
-### Compiles and hot-reloads for development
-
-```
-# yarn
-yarn dev
-
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# bun
-bun run dev
-```
-
-### Compiles and minifies for production
-
-```
-# yarn
-yarn build
-
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# bun
-bun run build
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://vitejs.dev/config/).
+Material Design 3风格

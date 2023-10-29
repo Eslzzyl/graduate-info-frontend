@@ -1,9 +1,9 @@
 <template>
-  <p>注册页</p>
+
 </template>
 
 <script lang="ts">
 export default {
-  name: 'Register',
+  name: 'Manager',
 }
 </script>

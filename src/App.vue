@@ -1,11 +1,10 @@
 <template>
   <v-app>
     <v-main>
-      <Home />
+      <router-view />
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
-  import Home from './components/Home.vue';
 </script>

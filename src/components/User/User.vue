@@ -4,7 +4,7 @@
       <v-navigation-drawer :rail="rail" permanent @click="rail = false" theme="light">
         <!--如果要加背景图片，就用：-->
         <!-- <v-navigation-drawer image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg" permanent theme="light"> -->
-        <v-list-item prepend-avatar="../../../public/cocoa1.ico" :title="userName" nav>
+        <v-list-item prepend-avatar="/cocoa1.ico" :title="userName" nav>
           <template v-slot:append>
             <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
           </template>
@@ -16,6 +16,10 @@
           <v-list-subheader v-if="rail"></v-list-subheader> -->
           <v-list-item prepend-icon="mdi-home" title="主页" value="home" rounded="xl"
             @click="changeView('Home')"></v-list-item>
+          <v-list-item prepend-icon="mdi-magnify" title="搜索" value="search" rounded="xl"
+            @click="changeView('Search')"></v-list-item>
+          <v-list-item prepend-icon="mdi-poll" title="统计" value="statistics" rounded="xl"
+            @click="changeView('Statistics')"></v-list-item>
           <v-list-item prepend-icon="mdi-mail" title="消息" value="info" rounded="xl"
             @click="changeView('Message')"></v-list-item>
           <v-list-item prepend-icon="mdi-account" title="个人信息" value="account" rounded="xl"
@@ -25,7 +29,7 @@
         <template v-slot:append>
           <div class="pa-2" style="width: 70%; margin: 0 auto;">
             <v-btn block variant="text" icon="mdi-logout" v-if="rail"></v-btn>
-            <v-btn block variant="outlined" v-if="!rail">登出</v-btn>
+            <v-btn block variant="tonal" v-if="!rail">登出</v-btn>
           </div>
         </template>
 

@@ -21,7 +21,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-btn :color="getSkyColor()" class="register-btn" type="submit">注册</v-btn>
+            <v-btn :color="getSkyColor()" class="register-btn" type="submit" @click="onRegisterSubmit">注册</v-btn>
           </v-row>
         </v-container>
       </v-form>
@@ -56,6 +56,10 @@ const passwordConfirmRules = [
     }
   },
 ]
+
+function onRegisterSubmit() {
+  
+}
 
 </script>
 

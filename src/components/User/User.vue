@@ -4,7 +4,7 @@
       <v-navigation-drawer :rail="rail" permanent @click="rail = false" theme="light">
         <!--如果要加背景图片，就用：-->
         <!-- <v-navigation-drawer image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg" permanent theme="light"> -->
-        <v-list-item prepend-avatar="/cocoa1.ico" :title="userName" nav>
+        <v-list-item prepend-avatar="/chino.jpg" :title="userName" nav>
           <template v-slot:append>
             <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
           </template>
@@ -28,20 +28,41 @@
 
         <template v-slot:append>
           <div class="pa-2" style="width: 70%; margin: 0 auto;">
-            <v-btn block variant="text" icon="mdi-logout" v-if="rail"></v-btn>
-            <v-btn block variant="tonal" v-if="!rail">登出</v-btn>
+            <v-dialog width="500">
+              <template v-slot:activator="{ props }">
+                <v-btn block v-bind="props" variant="text" icon="mdi-logout" v-if="rail"></v-btn>
+                <v-btn block v-bind="props" variant="tonal" v-if="!rail">登出</v-btn>
+              </template>
+
+              <template v-slot:default="{ isActive }">
+                <v-card title="确认登出">
+                  <v-card-text>
+                    你确定要登出吗？
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text="取消" @click="isActive.value = false;"></v-btn>
+                    <v-btn text="确定" @click="isActive.value = false; logout()"></v-btn>
+                  </v-card-actions>
+                </v-card>
+              </template>
+            </v-dialog>
           </div>
         </template>
 
       </v-navigation-drawer>
       <v-main style="height: 100vh;">
-        <component :is="currentView"></component>
+        <transition>
+          <component :is="currentView"></component>
+        </transition>
       </v-main>
     </v-layout>
   </v-card>
 </template>
 
 <script lang="ts">
+
 import Home from './Home.vue'
 import Message from './Message.vue'
 import Account from './Account.vue'
@@ -52,18 +73,20 @@ export default {
     return {
       rail: true,
       currentView: 'Home',
-      userName: 'temp user',
+      userName: '香风智乃',
     }
   },
   components: {
-    Home,
-    Message,
-    Account,
+    Home, Message, Account,
   },
   methods: {
     changeView(view: string) {
       this.currentView = view
     },
+    logout() {
+      this.$router.push('/')
+    },
   },
 }
+
 </script>

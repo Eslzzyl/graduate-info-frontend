@@ -15,7 +15,7 @@
             <v-col cols="2-5"><v-text-field v-model="password" label="密码" /></v-col>
           </v-row>
           <v-row>
-            <v-btn :color="getSkyColor()" class="login-btn" type="submit" block>登录</v-btn>
+            <v-btn :color="getSkyColor()" class="login-btn" type="submit" @click="onLoginSubmit" block>登录</v-btn>
           </v-row>
         </v-container>
       </v-form>
@@ -26,11 +26,15 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
 
 import { getSkyColor } from '@/plugins/util/color';
 
 const studentID = ref<string>('')
 const password = ref<string>('')
+
+// https://router.vuejs.org/zh/guide/advanced/composition-api.html
+const router = useRouter()
 
 const idRules = [
   (value: string | any[]) => {
@@ -41,6 +45,10 @@ const idRules = [
     }
   },
 ]
+
+function onLoginSubmit() {
+  router.push('/user')
+}
 
 </script>
 

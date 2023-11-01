@@ -5,7 +5,7 @@
     <v-sheet class="sheet" elevation="10" rounded="xl">
       <v-container>
         <v-row>
-          <v-img class="hfut-badge" src="/images/hfut.webp" height="60" width="60" />
+          <v-img class="hfut-badge" src="/image/hfut.webp" height="60" width="60" />
           <span class="header">毕业生去向信息共享系统</span>
         </v-row>
         <v-row>

@@ -4,7 +4,7 @@
       <v-navigation-drawer :rail="rail" permanent @click="rail = false" theme="light">
         <!--如果要加背景图片，就用：-->
         <!-- <v-navigation-drawer image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg" permanent theme="light"> -->
-        <v-list-item prepend-avatar="/chino.jpg" :title="userName" nav>
+        <v-list-item prepend-avatar="/avatar/chino.jpg" :title="userName" nav>
           <template v-slot:append>
             <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
           </template>
@@ -71,7 +71,7 @@ export default {
   name: 'User',
   data() {
     return {
-      rail: true,
+      rail: false,  // 是否折叠导航选项卡，默认不折叠
       currentView: 'Home',
       userName: '香风智乃',
     }

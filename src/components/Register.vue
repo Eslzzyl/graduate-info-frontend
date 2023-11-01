@@ -49,7 +49,7 @@ const idRules = [
 
 const passwordConfirmRules = [
   () => {
-    if (passwordConfirmed == password) {
+    if (passwordConfirmed.value === password.value) {
       return true
     } else {
       return '两次输入的密码不一致'

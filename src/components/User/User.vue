@@ -14,8 +14,8 @@
           <v-list-subheader v-if="rail"></v-list-subheader> -->
           <v-list-item prepend-icon="mdi-home" title="主页" value="home" rounded="xl"
             @click="changeView('Home');"></v-list-item>
-          <v-list-item prepend-icon="mdi-magnify" title="搜索" value="search" rounded="xl"
-            @click="changeView('Search');"></v-list-item>
+          <v-list-item prepend-icon="mdi-table" title="表格" value="table" rounded="xl"
+            @click="changeView('Table');"></v-list-item>
           <v-list-item prepend-icon="mdi-poll" title="统计" value="statistics" rounded="xl"
             @click="changeView('Statistics');"></v-list-item>
           <v-list-item prepend-icon="mdi-mail" title="消息" value="info" rounded="xl"
@@ -64,9 +64,9 @@
 
 import Home from './Home.vue'
 import Message from './Message.vue'
-import Search from './Search.vue'
 import Statistics from './Statistics.vue'
 import Account from './Account.vue'
+import Table from './Table.vue'
 
 export default {
   name: 'User',
@@ -77,7 +77,7 @@ export default {
     }
   },
   components: {
-    Home, Message, Account, Search, Statistics,
+    Home, Message, Account, Statistics,Table,
   },
   methods: {
     changeView(view: string) {

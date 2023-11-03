@@ -24,8 +24,9 @@
       </v-container>
     </v-card>
     <v-fade-transition>
-      <v-alert v-if="isErrorHappened" text="加载似乎出了一点问题。尝试刷新页面？" rounded="xl" variant="elevated" elevation="5"
-        class="card"></v-alert>
+      <v-alert v-if="isErrorHappened" rounded="xl" variant="elevated" elevation="5" class="card">
+          加载似乎出了一点问题。尝试刷新页面？<br>{{ requestError }}
+      </v-alert>
     </v-fade-transition>
   </v-container>
 </template>
@@ -45,6 +46,8 @@ const isErrorHappened = ref(false)
 const pageCount = ref(0)
 const page = ref(0)
 const sortBy = ref([])
+
+const requestError = ref(null)
 
 const headers = ref([
   {
@@ -107,6 +110,7 @@ async function request({ page, itemsPerPage, sortBy, search }) {
     }
   }).catch((error) => {
     console.log(error)
+    requestError.value = error
     isErrorHappened.value = true
   });
 }

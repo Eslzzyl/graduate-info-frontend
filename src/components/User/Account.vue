@@ -2,6 +2,11 @@
   <v-container>
     <v-banner sticky style="font-size: 2rem;">个人信息</v-banner>
     <v-container style="max-height: 90vh; overflow-y: auto;">
+      <v-fade-transition>
+        <v-alert v-if="isGetInfoErrorHappened" rounded="xl" variant="elevated" elevation="5" class="card">
+          加载似乎出了一点问题。尝试刷新页面？<br>{{ requestError }}
+        </v-alert>
+      </v-fade-transition>
       <v-card variant="elevated" elevation="5" class="card" rounded="xl">
         <v-card-title>学籍信息</v-card-title>
         <v-form>
@@ -25,8 +30,8 @@
                   :items="studentMajorSelect"></v-select>
               </v-col>
               <v-col cols="2">
-                <v-text-field variant="outlined" clearable v-model="studentClass" label="班级"
-                  hint="只填数字即可，如“1”" persistent-hint></v-text-field>
+                <v-text-field variant="outlined" clearable v-model="studentClass" label="班级" hint="只填数字即可，如“1”"
+                  persistent-hint></v-text-field>
               </v-col>
               <v-col cols="2">
                 <v-select variant="outlined" clearable v-model="studentGraduated" label="是否已毕业"
@@ -89,12 +94,10 @@
         </v-form>
       </v-card>
 
-      <v-btn elevation="5">提交上述信息的更改</v-btn>
-
       <v-card variant="elevated" elevation="5" class="card" rounded="xl">
         <v-card-title>账号</v-card-title>
-          <v-form fast-fail @submit.prevent>
-            <v-container>
+        <v-form fast-fail @submit.prevent>
+          <v-container>
             <v-row>
               <v-col>
                 学号：{{ studentID }}
@@ -106,12 +109,12 @@
             <v-row>
               <v-col cols="3">
                 头像：
-                <v-avatar image="/avatar/chino.jpg" size="64"></v-avatar>
+                <v-avatar :image="studentAvatar !== '' ? studentAvatar : '/avatar/chino.jpg'" size="64"></v-avatar>
               </v-col>
             </v-row>
             <v-row>
               <v-col>
-                <v-btn>上传新头像</v-btn>
+                <v-btn @click="updateAvatar">上传新头像</v-btn>
               </v-col>
             </v-row>
             <v-row>
@@ -127,23 +130,28 @@
                 <v-text-field variant="outlined" v-model="newPassword" label="新密码"></v-text-field>
               </v-col>
               <v-col>
-                <v-text-field variant="outlined" v-model="newPasswordConfirmed" label="再次输入以确认密码" :rules="passwordConfirmRules"></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-btn type="submit">提交新密码</v-btn>
+                <v-text-field variant="outlined" v-model="newPasswordConfirmed" label="再次输入以确认密码"
+                  :rules="passwordConfirmRules"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
-          </v-form>
+        </v-form>
       </v-card>
+      <v-fade-transition>
+        <v-alert v-if="isUpdateInfoErrorHappened" rounded="xl" variant="elevated" elevation="5" class="card">
+          上传数据时似乎出了一点问题。尝试重新上传？<br>{{ requestError }}
+        </v-alert>
+      </v-fade-transition>
+      <v-btn @click="updateInfo">提交更改</v-btn>
     </v-container>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import axiosInstance from '@/plugins/util/axiosInstance';
+import { AxiosError } from 'axios';
+import { onMounted } from 'vue';
 
 const studentName = ref<string>('')
 const studentGender = ref<string>('')
@@ -172,6 +180,13 @@ const studentID = ref<string>('123456')
 const newPassword = ref<string>('')
 const newPasswordConfirmed = ref<string>('')
 
+const studentAvatar = ref<string>('')
+const isAvatarUpdated = ref<boolean>(false)
+
+const isGetInfoErrorHappened = ref<boolean>(false)
+const isUpdateInfoErrorHappened = ref<boolean>(false)
+const requestError = ref<AxiosError>()
+
 const passwordConfirmRules = [
   () => {
     if (newPassword.value === newPasswordConfirmed.value) {
@@ -182,7 +197,47 @@ const passwordConfirmRules = [
   },
 ]
 
-function getInfo() {
+onMounted(() => {
+  axiosInstance
+    .get('/user/getinfo')
+    .then((response) => {
+      console.log(response)
+      if (response.data.code === 1) {
+        console.log('请求成功')
+        isGetInfoErrorHappened.value = false
+        // TODO
+      } else {
+        isGetInfoErrorHappened.value = true
+        console.log('请求失败！')
+      }
+    }).catch((error) => {
+      console.log(error)
+      requestError.value = error
+      isGetInfoErrorHappened.value = true
+    })
+})
+
+async function updateInfo() {
+  axiosInstance
+    .post('/user/updateinfo', {
+      // TODO
+    }).then((response) => {
+      console.log(response)
+      if (response.data.code === 1) {
+        console.log('请求成功')
+        isUpdateInfoErrorHappened.value = false
+      } else {
+        isUpdateInfoErrorHappened.value = true
+        console.log('请求失败！')
+      }
+    }).catch((error) => {
+      console.log(error)
+      requestError.value = error
+      isUpdateInfoErrorHappened.value = true
+    })
+}
+
+function updateAvatar() {
 
 }
 

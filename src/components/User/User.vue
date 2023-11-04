@@ -49,7 +49,7 @@
         </template>
 
       </v-navigation-drawer>
-      <v-main style="height: 100vh;">
+      <v-main style="height: 100vh; overflow-y: auto;">
         <v-container>
           <v-slide-x-transition>
             <component :is="currentView"></component>

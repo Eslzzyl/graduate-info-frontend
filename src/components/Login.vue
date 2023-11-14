@@ -8,18 +8,21 @@
         <v-container>
           <v-row>
             <v-col class="icon" cols="1"><v-icon icon="mdi-account"></v-icon></v-col>
-            <v-col cols="2-5"><v-text-field v-model="studentID" label="学号" :rules="idRules" /></v-col>
+            <v-col cols="11"><v-text-field v-model="studentID" label="学号" :rules="idRules" /></v-col>
           </v-row>
           <v-row>
             <v-col class="icon" cols="1"><v-icon icon="mdi-lock"></v-icon></v-col>
-            <v-col cols="2-5"><v-text-field v-model="password" label="密码" /></v-col>
+            <v-col cols="11"><v-text-field v-model="password" label="密码" /></v-col>
           </v-row>
           <v-row>
-            <v-btn :color="getSkyColor()" class="login-btn" type="submit" @click="onLoginSubmit" block>登录</v-btn>
+            <v-btn :color="getSkyColor()" id="login-btn" type="submit" @click="onLoginSubmit" block>登录</v-btn>
           </v-row>
         </v-container>
       </v-form>
     </v-row>
+    <v-snackbar v-model="snackbar" timeout="5000" rounded="pill" :color="getSkyColor()">
+      {{ loginPrompt }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -29,9 +32,14 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 
 import { getSkyColor } from '@/plugins/util/color';
+import { calculate_sha256 } from '@/plugins/util/encrypt';
+import axiosInstance from '@/plugins/util/axiosInstance';
 
 const studentID = ref<string>('')
 const password = ref<string>('')
+
+const snackbar = ref<boolean>(false)
+const loginPrompt = ref<string>('')
 
 // https://router.vuejs.org/zh/guide/advanced/composition-api.html
 const router = useRouter()
@@ -47,7 +55,37 @@ const idRules = [
 ]
 
 function onLoginSubmit() {
-  router.push('/user')
+  if (studentID.value === '' || password.value === '') {
+    loginPrompt.value = '请你将信息输入完整'
+    snackbar.value = true
+    return
+  }
+  const hashed_password = calculate_sha256(password.value)
+
+  axiosInstance.post('/register', {
+    id: studentID,
+    password: hashed_password,
+  }).then((response) => {
+    if (response.data.code === 0) {
+      loginPrompt.value = "登录成功！"
+      snackbar.value = true
+      // TODO 需要增加逻辑
+      router.push('/user')
+    } else if (response.data.code === 1) {  // 账号不存在
+      loginPrompt.value = "你输入的学号尚未注册。"
+      snackbar.value = true
+    } else if (response.data.code === 2) {  // 账号已存在但密码不正确
+      loginPrompt.value = "你输入的密码有误。"
+      snackbar.value = true
+    } else if (response.data.code === 3) {  // 其他情况
+      loginPrompt.value = response.data.message
+      snackbar.value = true
+    }
+  }).catch((error) => {
+    loginPrompt.value = "遇到错误：" + error.message
+    snackbar.value = true
+    console.error('尝试注册时遇到错误：', error)
+  })
 }
 
 </script>
@@ -67,7 +105,7 @@ function onLoginSubmit() {
   text-align: center;
 }
 
-.login-btn {
+#login-btn {
   width: 40%;
   margin: 0 auto;
 }

@@ -8,6 +8,9 @@ dependencies:
   '@mdi/font':
     specifier: 7.0.96
     version: 7.0.96
+  '@types/crypto-js':
+    specifier: ^4.2.1
+    version: 4.2.1
   '@vue/typescript':
     specifier: ^1.8.20
     version: 1.8.20(typescript@5.0.2)
@@ -17,6 +20,9 @@ dependencies:
   chart.js:
     specifier: ^4.4.0
     version: 4.4.0
+  crypto-js:
+    specifier: ^4.2.0
+    version: 4.2.0
   roboto-fontface:
     specifier: '*'
     version: 0.4.1
@@ -298,6 +304,10 @@ packages:
       fastq: 1.15.0
     dev: true
 
+  /@types/crypto-js@4.2.1:
+    resolution: {integrity: sha512-FSPGd9+OcSok3RsM0UZ/9fcvMOXJ1ENE/ZbLfOPlBWj7BgXtEAM8VYfTtT760GiLbQIMoVozwVuisjvsVwqYWw==}
+    dev: false
+
   /@types/node@18.15.0:
     resolution: {integrity: sha512-z6nr0TTEOBGkzLGmbypWOGnpSpSIBorEhC4L+4HeQ2iezKCi4f77kyslRwvHeNitymGQ+oFyIWGP96l/DPSV9w==}
 
@@ -562,6 +572,10 @@ packages:
 
   /computeds@0.0.1:
     resolution: {integrity: sha512-7CEBgcMjVmitjYo5q8JTJVra6X5mQ20uTThdK+0kR7UEaDrAWEQcRiBtWJzga4eRpP6afNwwLsX2SET2JhVB1Q==}
+
+  /crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+    dev: false
 
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}

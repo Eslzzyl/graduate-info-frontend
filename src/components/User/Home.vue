@@ -11,9 +11,10 @@
       <v-col>
         <v-hover>
           <template v-slot:default="{ isHovering, props }">
-            <v-card v-bind="props" color="indigo" class="card" variant="tonal"
+            <v-card @click="$emit('gotoTableEvent')" v-bind="props" class="card" color="indigo-lighten-5"
               :elevation="isHovering ? 10 : 5" rounded="xl">
-              text1
+              <v-card-title><v-icon icon="mdi-table"></v-icon> 表格</v-card-title>
+              <v-card-subtitle>通过搜索和排序功能迅速检索信息</v-card-subtitle>
             </v-card>
           </template>
         </v-hover>
@@ -21,9 +22,10 @@
       <v-col>
         <v-hover>
           <template v-slot:default="{ isHovering, props }">
-            <v-card v-bind="props" color="indigo" class="card" variant="tonal"
+            <v-card @click="$emit('gotoStatisticsEvent')" v-bind="props" class="card" color="indigo-lighten-5"
               :elevation="isHovering ? 10 : 5" rounded="xl">
-              text1
+              <v-card-title><v-icon icon="mdi-poll"></v-icon> 统计</v-card-title>
+              <v-card-subtitle>通过多种多样的图表发现去向规律</v-card-subtitle>
             </v-card>
           </template>
         </v-hover>
@@ -33,9 +35,10 @@
       <v-col>
         <v-hover>
           <template v-slot:default="{ isHovering, props }">
-            <v-card v-bind="props" color="indigo" class="card" variant="tonal"
+            <v-card @click="$emit('gotoMessageEvent')" v-bind="props" class="card" color="indigo-lighten-5"
               :elevation="isHovering ? 10 : 5" rounded="xl">
-              text1
+              <v-card-title><v-icon icon="mdi-mail"></v-icon> 消息</v-card-title>
+              <v-card-subtitle>利用站内消息与同学互动</v-card-subtitle>
             </v-card>
           </template>
         </v-hover>
@@ -43,9 +46,10 @@
       <v-col>
         <v-hover>
           <template v-slot:default="{ isHovering, props }">
-            <v-card v-bind="props" color="indigo" class="card" variant="tonal"
+            <v-card @click="$emit('gotoAccountEvent')" v-bind="props" class="card" color="indigo-lighten-5"
               :elevation="isHovering ? 10 : 5" rounded="xl">
-              text1
+              <v-card-title><v-icon icon="mdi-account"></v-icon> 个人信息</v-card-title>
+              <v-card-subtitle>维护自己的去向信息和账号信息</v-card-subtitle>
             </v-card>
           </template>
         </v-hover>
@@ -114,14 +118,15 @@ const slides = [
 .card {
   margin: 0 auto;
   height: 200px;
-  margin-bottom: 15px;
-  margin-top: 15px;
+  margin-bottom: 10px;
+  margin-top: 10px;
   margin-left: 20px;
   margin-right: 20px;
 }
 
 #carousel {
   border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 .title {
@@ -130,4 +135,9 @@ const slides = [
   font-size: 3rem;
   color: aliceblue;
 }
+
+#v-card-title {
+  font-weight: bold;
+}
+
 </style>

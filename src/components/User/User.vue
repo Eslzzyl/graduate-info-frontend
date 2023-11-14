@@ -5,8 +5,8 @@
         <!--如果要加背景图片，就用：-->
         <!-- <v-navigation-drawer image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg" permanent theme="light"> -->
         <v-sheet color="indigo-lighten-5" class="pa-4" rounded="xl">
-          <v-avatar image="/avatar/chino.jpg" size="64" class="mb-4"></v-avatar>
-          <div>{{ userName }}</div>
+          <v-avatar :image="studentAvatar !== '' ? studentAvatar : '/avatar/chino.jpg'" size="64" class="mb-4"></v-avatar>
+          <div>{{ studentName }}</div>
         </v-sheet>
 
         <v-list nav>
@@ -52,7 +52,14 @@
       <v-main style="height: 100vh; overflow-y: auto;">
         <v-container>
           <v-slide-x-transition>
-            <component :is="currentView"></component>
+            <component
+              :is="currentView"
+              @goto-table-event="currentView = 'Table'"
+              @goto-statistics-event="currentView = 'Statistics'"
+              @goto-message-event="currentView = 'Message'"
+              @goto-account-event="currentView = 'Account'"
+              @change-avatar="(avatar: string) => { studentAvatar = avatar; console.log(studentAvatar)}"
+            ></component>
           </v-slide-x-transition>
         </v-container>
       </v-main>
@@ -73,7 +80,8 @@ export default {
   data() {
     return {
       currentView: 'Home',
-      userName: '香风智乃',
+      studentName: '',
+      studentAvatar: '',
     }
   },
   components: {

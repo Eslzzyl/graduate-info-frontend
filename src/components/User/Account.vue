@@ -14,25 +14,24 @@
             <v-container>
               <v-row>
                 <v-col cols="3">
-                  <v-text-field variant="outlined" clearable v-model="studentName" label="姓名"></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentName" label="姓名" hint="不可修改" persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-select variant="outlined" clearable v-model="studentGender" label="性别"
-                    :items="studentGenderList"></v-select>
+                  <v-text-field variant="outlined" readonly v-model="studentGender" label="性别" hint="不可修改" persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-select variant="outlined" clearable v-model="studentGrade" label="年级"
-                    :items="studentGradeList"></v-select>
+                  <v-text-field variant="outlined" readonly v-model="studentGrade" label="年级" hint="不可修改" persistent-hint></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4">
-                  <v-select variant="outlined" clearable v-model="studentMajor" label="专业"
-                    :items="studentMajorList"></v-select>
+                <v-col cols="3">
+                  <v-text-field variant="outlined" readonly v-model="studentDept" label="院系"  hint="不可修改" persistent-hint></v-text-field>
+                </v-col>
+                <v-col cols="3">
+                  <v-text-field variant="outlined" readonly v-model="studentMajor" label="专业" hint="不可修改" persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field variant="outlined" clearable v-model="studentClass" label="班级" hint="只填数字即可，如“1”"
-                    persistent-hint></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentClass" label="班级" hint="不可修改" persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
                   <v-select variant="outlined" clearable v-model="studentGraduated" label="是否已毕业"
@@ -154,25 +153,27 @@
       </v-fade-transition>
       <v-btn @click="updateInfo">提交更改</v-btn>
     </v-container>
+    <v-snackbar v-model="snackbar" timeout="5000" rounded="pill" color="indigo-lighten-4">
+      {{ avatarPrompt }}
+      <v-btn variant="text" @click="snackbar = false">关闭</v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import axiosInstance from '@/plugins/util/axiosInstance';
-import { AxiosError } from 'axios';
+import axios from 'axios';
 import { onMounted } from 'vue';
 
 const studentName = ref('')
 const studentGender = ref('')
-const studentGenderList = ['男', '女', '其他']
 const studentClass = ref('')
 const studentGrade = ref('')
-const studentGradeList = ref(['2020', '2021', '2022'])
 const studentGraduated = ref('')
 const studentGraduatedList = ['是', '否']
+const studentDept = ref('')
 const studentMajor = ref('')
-const studentMajorList = ref(['计算机科学与技术', '软件工程'])
 
 const goneType = ref('')
 const goneTypeList = ref(['升学', '就业', '出国'])
@@ -198,6 +199,13 @@ const isGetInfoErrorHappened = ref(false)
 const isUpdateInfoErrorHappened = ref(false)
 const requestError = ref()
 
+const snackbar = ref(false)
+const avatarPrompt = ref('')
+
+const emit = defineEmits<{
+  (event: 'change-avatar', avatar: string): void
+}>()
+
 // https://cn.vuejs.org/api/built-in-special-attributes.html#ref
 const avatarSelector = ref<HTMLElement>()
 
@@ -208,12 +216,6 @@ const passwordConfirmRules = [
     } else {
       return '两次输入的密码不一致'
     }
-  },
-]
-
-const selectAvatarRules = [
-  (value: File[]) => {
-    return !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
   },
 ]
 
@@ -241,7 +243,6 @@ async function updateInfo() {
   axiosInstance
     .post('/user/updateinfo', {
       // TODO
-      // 注意，当isAvatarUpdated为true时，需要将头像上传到图床。
     }).then((response) => {
       console.log(response)
       if (response.data.code === 1) {
@@ -258,6 +259,7 @@ async function updateInfo() {
     })
 }
 
+// 这个函数仅仅用于唤起文件选择对话框，不承载任何业务逻辑
 function handleAvatarButton() {
   isSelectingAvatar.value = true
 
@@ -265,18 +267,35 @@ function handleAvatarButton() {
   window.addEventListener('focus', () => {
     isSelectingAvatar.value = false
   }, { once: true });
-  
+
   // Trigger click on the FileInput
   (avatarSelector.value as HTMLElement).click();
 }
 
 function updateAvatar(e: Event) {
+  isSelectingAvatar.value = true    // 上传时也转圈
   const target = e.target as HTMLInputElement
   if (target !== null && target.files !== null) {
     isAvatarUpdated.value = true
     const selectedAvatar = target.files[0]
-    studentAvatar.value = URL.createObjectURL(selectedAvatar)
-    console.log(studentAvatar.value)
+    const formData = new FormData();
+    formData.append('file', selectedAvatar);
+
+    axios.post("https://img.eslzzyl.eu.org/upload", formData)
+      .then((response) => {
+        studentAvatar.value = response.data
+        avatarPrompt.value = "头像上传成功，你仍然需要点击下面的提交按钮来提交更改"
+        snackbar.value = true
+        console.log("新头像URL：", studentAvatar.value)
+        isSelectingAvatar.value = false
+        emit('change-avatar', studentAvatar.value)
+      }).catch((error) => {
+        console.error('上传头像时遇到问题：', error)
+        avatarPrompt.value = "上传头像时遇到问题：" + error.message
+        snackbar.value = true
+        isSelectingAvatar.value = false
+        return
+      })
   }
 }
 

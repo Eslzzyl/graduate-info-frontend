@@ -118,11 +118,11 @@ async function request({ page, itemsPerPage, sortBy, search }) {
 async function loadItems({ page, itemsPerPage, sortBy }) {
   loading.value = true
   const result = await request({ page, itemsPerPage, sortBy, search })
-  pageCount = result.pageCount
+  pageCount.value = result.pageCount
   const packedData = result.data
   loading.value = false
   if (packedData.length !== 0) {
-    tableData = packedData
+    tableData.value = packedData
   }
 }
 

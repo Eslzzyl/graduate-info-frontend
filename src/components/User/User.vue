@@ -18,8 +18,6 @@
             @click="changeView('Table');"></v-list-item>
           <v-list-item prepend-icon="mdi-poll" title="统计" value="statistics" rounded="xl"
             @click="changeView('Statistics');"></v-list-item>
-          <v-list-item prepend-icon="mdi-mail" title="消息" value="info" rounded="xl"
-            @click="changeView('Message');"></v-list-item>
           <v-list-item prepend-icon="mdi-account" title="个人信息" value="account" rounded="xl"
             @click="changeView('Account');"></v-list-item>
         </v-list>
@@ -56,7 +54,6 @@
               :is="currentView"
               @goto-table-event="currentView = 'Table'"
               @goto-statistics-event="currentView = 'Statistics'"
-              @goto-message-event="currentView = 'Message'"
               @goto-account-event="currentView = 'Account'"
               @change-avatar="(avatar: string) => { studentAvatar = avatar; console.log(studentAvatar)}"
             ></component>
@@ -70,7 +67,6 @@
 <script lang="ts">
 
 import Home from './Home.vue'
-import Message from './Message.vue'
 import Statistics from './Statistics.vue'
 import Account from './Account.vue'
 import Table from './Table.vue'
@@ -85,7 +81,7 @@ export default {
     }
   },
   components: {
-    Home, Message, Account, Statistics,Table,
+    Home, Account, Statistics,Table,
   },
   methods: {
     changeView(view: string) {

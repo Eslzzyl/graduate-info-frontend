@@ -35,17 +35,6 @@
       <v-col>
         <v-hover>
           <template v-slot:default="{ isHovering, props }">
-            <v-card @click="$emit('gotoMessageEvent')" v-bind="props" class="card" color="indigo-lighten-5"
-              :elevation="isHovering ? 10 : 5" rounded="xl">
-              <v-card-title><v-icon icon="mdi-mail"></v-icon> 消息</v-card-title>
-              <v-card-subtitle>利用站内消息与同学互动</v-card-subtitle>
-            </v-card>
-          </template>
-        </v-hover>
-      </v-col>
-      <v-col>
-        <v-hover>
-          <template v-slot:default="{ isHovering, props }">
             <v-card @click="$emit('gotoAccountEvent')" v-bind="props" class="card" color="indigo-lighten-5"
               :elevation="isHovering ? 10 : 5" rounded="xl">
               <v-card-title><v-icon icon="mdi-account"></v-icon> 个人信息</v-card-title>
@@ -59,7 +48,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 
 const slides = [
   {

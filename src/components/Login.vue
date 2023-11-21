@@ -70,7 +70,19 @@ function onLoginSubmit() {
       loginPrompt.value = "登录成功！"
       snackbar.value = true
       // TODO 需要增加逻辑
-      router.push('/user')
+      const token = response.data.jwt
+      window.localStorage.setItem("token", token)
+      window.localStorage.setItem("id", studentID.value)
+      window.localStorage.setItem("hashed_password", hashed_password)
+      const user_type = response.data.user_type
+      if (user_type === 'user') {
+        router.push('/user')
+      } else if (user_type === 'manager') {
+        router.push('/manager')
+      } else {
+        loginPrompt.value = "服务端返回了一个未知的用户类型: " + user_type
+        snackbar.value = true
+      }
     } else if (response.data.code === 1) {  // 账号不存在
       loginPrompt.value = "你输入的学号尚未注册。"
       snackbar.value = true

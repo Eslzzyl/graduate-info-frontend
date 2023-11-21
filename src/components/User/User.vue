@@ -18,8 +18,8 @@
             @click="changeView('Table');"></v-list-item>
           <v-list-item prepend-icon="mdi-poll" title="统计" value="statistics" rounded="xl"
             @click="changeView('Statistics');"></v-list-item>
-          <v-list-item prepend-icon="mdi-account" title="个人信息" value="account" rounded="xl"
-            @click="changeView('Account');"></v-list-item>
+          <v-list-item prepend-icon="mdi-account" title="个人信息" value="user_account" rounded="xl"
+            @click="changeView('UserAccount');"></v-list-item>
         </v-list>
 
         <template v-slot:append>
@@ -54,7 +54,7 @@
               :is="currentView"
               @goto-table-event="currentView = 'Table'"
               @goto-statistics-event="currentView = 'Statistics'"
-              @goto-account-event="currentView = 'Account'"
+              @goto-account-event="currentView = 'UserAccount'"
               @change-avatar="(avatar: string) => { studentAvatar = avatar; console.log(studentAvatar)}"
             ></component>
           </v-slide-x-transition>
@@ -68,7 +68,7 @@
 
 import Home from './Home.vue'
 import Statistics from './Statistics.vue'
-import Account from './Account.vue'
+import UserAccount from './UserAccount.vue'
 import Table from './Table.vue'
 
 export default {
@@ -76,12 +76,12 @@ export default {
   data() {
     return {
       currentView: 'Home',
-      studentName: '',
+      studentName: '香风智乃',
       studentAvatar: '',
     }
   },
   components: {
-    Home, Account, Statistics,Table,
+    Home, UserAccount, Statistics,Table,
   },
   methods: {
     changeView(view: string) {

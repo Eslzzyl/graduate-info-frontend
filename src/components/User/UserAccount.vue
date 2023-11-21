@@ -14,24 +14,30 @@
             <v-container>
               <v-row>
                 <v-col cols="3">
-                  <v-text-field variant="outlined" readonly v-model="studentName" label="姓名" hint="不可修改" persistent-hint></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentName" label="姓名" hint="不可修改"
+                    persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field variant="outlined" readonly v-model="studentGender" label="性别" hint="不可修改" persistent-hint></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentGender" label="性别" hint="不可修改"
+                    persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field variant="outlined" readonly v-model="studentGrade" label="年级" hint="不可修改" persistent-hint></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentGrade" label="年级" hint="不可修改"
+                    persistent-hint></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="3">
-                  <v-text-field variant="outlined" readonly v-model="studentDept" label="院系"  hint="不可修改" persistent-hint></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentDept" label="院系" hint="不可修改"
+                    persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="3">
-                  <v-text-field variant="outlined" readonly v-model="studentMajor" label="专业" hint="不可修改" persistent-hint></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentMajor" label="专业" hint="不可修改"
+                    persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
-                  <v-text-field variant="outlined" readonly v-model="studentClass" label="班级" hint="不可修改" persistent-hint></v-text-field>
+                  <v-text-field variant="outlined" readonly v-model="studentClass" label="班级" hint="不可修改"
+                    persistent-hint></v-text-field>
                 </v-col>
                 <v-col cols="2">
                   <v-select variant="outlined" clearable v-model="studentGraduated" label="是否已毕业"
@@ -146,12 +152,12 @@
           </v-form>
         </v-card>
       </v-fab-transition>
+      <v-btn @click="updateInfo">提交更改</v-btn>
       <v-fade-transition>
         <v-alert v-if="isUpdateInfoErrorHappened" rounded="xl" variant="elevated" elevation="5" class="card">
           上传数据时似乎出了一点问题。尝试重新上传？<br>{{ requestError }}
         </v-alert>
       </v-fade-transition>
-      <v-btn @click="updateInfo">提交更改</v-btn>
     </v-container>
     <v-snackbar v-model="snackbar" timeout="5000" rounded="pill" color="indigo-lighten-4">
       {{ avatarPrompt }}
@@ -161,10 +167,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import axiosInstance from '@/plugins/util/axiosInstance';
 import axios from 'axios';
-import { onMounted } from 'vue';
+import { calculate_sha256 } from '@/plugins/util/encrypt';
 
 const studentName = ref('')
 const studentGender = ref('')
@@ -240,6 +246,7 @@ onMounted(() => {
 })
 
 async function updateInfo() {
+  const hashed_password = calculate_sha256(newPassword.value)
   axiosInstance
     .post('/user/updateinfo', {
       // TODO
@@ -250,10 +257,11 @@ async function updateInfo() {
         isUpdateInfoErrorHappened.value = false
       } else {
         isUpdateInfoErrorHappened.value = true
-        console.log('请求失败！')
+        console.error('请求失败！', response.data.message)
+        requestError.value = response.data.message
       }
     }).catch((error) => {
-      console.log(error)
+      console.error(error)
       requestError.value = error
       isUpdateInfoErrorHappened.value = true
     })
@@ -301,10 +309,8 @@ function updateAvatar(e: Event) {
 
 </script>
 
-<style scoped>
-.card {
+<style scoped>.card {
   margin: 0 auto;
   margin-bottom: 15px;
   margin-top: 15px;
-}
-</style>
+}</style>

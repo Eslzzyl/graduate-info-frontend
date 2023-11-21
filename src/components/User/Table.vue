@@ -4,8 +4,11 @@
     <v-card rounded="xl" variant="elevated" elevation="5" class="card">
       <v-container>
         <v-row>
-          <v-col cols="2">
-            <v-text-field variant="outlined" density="compact" label="检索姓名" v-model="search" clearable></v-text-field>
+          <v-col cols="3">
+            <v-text-field variant="outlined" density="compact" label="检索用户..." v-model="search" clearable></v-text-field>
+          </v-col>
+          <v-col>
+            <v-btn color="indigo-accent-1" @click="loadItems()">搜索</v-btn>
           </v-col>
         </v-row>
         <v-row>
@@ -58,7 +61,7 @@ const headers = ref([
   },
   {
     title: '年级',
-    align: 'center',  // 从没见过start end这种对齐方式，太阴间了
+    align: 'center',
     sortable: true,
     key: 'grade',
   },

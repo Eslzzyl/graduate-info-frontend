@@ -93,7 +93,7 @@ function onRegisterSubmit() {
       registerPrompt.value = "你输入的学号和姓名不匹配。"
       snackbar.value = true
     } else if (response.data.code === 3) {  // 查无此人
-      registerPrompt.value = "系统中没有你输入的学号的记录。"
+      registerPrompt.value = "系统中没有你输入的学号的记录。你是本校学生吗？"
       snackbar.value = true
     } else if (response.data.code === 4) {  // 其他情况
       registerPrompt.value = response.data.message

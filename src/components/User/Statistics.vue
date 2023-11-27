@@ -126,7 +126,7 @@ function search() {
       goneData.value = response.data.gone
       formatChartParams()
     } else {
-      prompt = "服务端请求出错：" + response.data.message
+      prompt.value = "服务端请求出错：" + response.data.message
       snackbar.value = true
     }
   }).catch((error) => {

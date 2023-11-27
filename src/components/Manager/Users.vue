@@ -164,6 +164,36 @@ const headers = ref([
     key: 'name'
   },
   {
+    title: '性别',
+    align: 'center',
+    sortable: false,
+    key: 'gender',
+  },
+  {
+    title: '年级',
+    align: 'center',
+    sortable: true,
+    key: 'grade'
+  },
+  {
+    title: '院系',
+    align: 'center',
+    sortable: false,
+    key: 'dept',
+  },
+  {
+    title: '专业',
+    align: 'center',
+    sortable: false,
+    key: 'major',
+  },
+  {
+    title: '班级',
+    align: 'center',
+    sortable: true,
+    key: 'class',
+  },
+  {
     title: '操作',
     align: 'center',
     sortable: false,
@@ -227,7 +257,7 @@ async function getInfo({ page, itemsPerPage, sortBy, search }) {
     }
   }).catch((error) => {
     console.error(error)
-    requestError.value = error
+    requestError.value = error.message
     isErrorHappened.value = true
   });
 }
@@ -263,6 +293,61 @@ async function loadItems({ page, itemsPerPage, sortBy }) {
     users.value = packedData
   }
 }
+
+// 保存学生信息
+function newItemSaved() {
+  if (studentID.value === '' || studentName.value === '' || studentGender.value === '' || studentGrade.value === '' || studentDept.value === '' || studentMajor.value === '' || studentClass.value === '') {
+    prompt.value = '请将信息输入完整'
+    snackbar.value = true
+    return
+  }
+
+  students.value.push({
+    id: studentID.value,
+    name: studentName.value,
+    gender: studentGender.value,
+    grade: studentGrade.value,
+    dept: studentDept.value,
+    major: studentMajor.value,
+    class: studentClass.value,
+  })
+  // 清空学生信息
+  studentID.value = ''
+  studentName.value = ''
+  studentGender.value = ''
+  studentGrade.value = ''
+  studentDept.value = ''
+  studentMajor.value = ''
+  studentClass.value = ''
+
+  axiosInstance.post('/manager/add', {
+    id: studentID.value,
+    name: studentName.value,
+    gender: studentGender.value,
+    grade: studentGrade.value,
+    dept: studentDept.value,
+    major: studentMajor.value,
+    class: studentClass.value,
+  }).then((response) => {
+    console.log(response)
+    if (response.data.code === 1) {
+      console.log('新增学生信息成功')
+      prompt.value = '新增学生信息成功'
+      snackbar.value = true
+    } else {
+      console.error('新增学生信息失败:', response.data.message)
+      prompt.value = '新增学生信息失败: ' + response.data.message
+      snackbar.value = true
+    }
+  }).catch((error) => {
+    console.error(error)
+    requestError.value = error
+    isErrorHappened.value = true
+  });
+
+  dialog.value = false
+}
+
 </script>
 
 <style scoped>

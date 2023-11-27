@@ -9,14 +9,7 @@
           <span class="header">毕业生去向信息共享系统</span>
         </v-row>
         <v-row>
-          <Login v-if="currComponent == 'Login'"></Login>
-          <Register v-if="currComponent == 'Register'"></Register>
-        </v-row>
-        <v-row>
-          <v-btn :color="DynamicColor.getSkyColor()" variant="tonal" v-if="currComponent == 'Login'" class="prompt"
-            @click="currComponent = 'Register'">没有账号？去注册</v-btn>
-          <v-btn :color="DynamicColor.getSkyColor()" variant="tonal" v-if="currComponent == 'Register'" class="prompt"
-            @click="currComponent = 'Login'">去登录</v-btn>
+          <Login />
         </v-row>
       </v-container>
     </v-sheet>
@@ -31,7 +24,6 @@ import CLOUDS from "vanta/dist/vanta.clouds.min"
 import * as DynamicColor from '@/plugins/util/color';
 
 import Login from './Login.vue';
-import Register from './Register.vue';
 
 const vantaRef = ref(null)
 let vantaEffect: any = null

@@ -262,7 +262,7 @@ async function updateInfo() {
       }
     }).catch((error) => {
       console.error(error)
-      requestError.value = error
+      requestError.value = error.message
       isUpdateInfoErrorHappened.value = true
     })
 }

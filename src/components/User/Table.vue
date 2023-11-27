@@ -113,7 +113,7 @@ async function request({ page, itemsPerPage, sortBy, search }) {
     }
   }).catch((error) => {
     console.log(error)
-    requestError.value = error
+    requestError.value = error.message
     isErrorHappened.value = true
   });
 }

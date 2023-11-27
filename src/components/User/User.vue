@@ -13,13 +13,13 @@
           <!-- <v-list-subheader v-if="!rail">毕业生去向信息共享系统</v-list-subheader>
           <v-list-subheader v-if="rail"></v-list-subheader> -->
           <v-list-item prepend-icon="mdi-home" title="主页" value="home" rounded="xl"
-            @click="changeView('Home');"></v-list-item>
+            @click="changeView(Home);"></v-list-item>
           <v-list-item prepend-icon="mdi-table" title="表格" value="table" rounded="xl"
-            @click="changeView('Table');"></v-list-item>
+            @click="changeView(Table);"></v-list-item>
           <v-list-item prepend-icon="mdi-poll" title="统计" value="statistics" rounded="xl"
-            @click="changeView('Statistics');"></v-list-item>
+            @click="changeView(Statistics);"></v-list-item>
           <v-list-item prepend-icon="mdi-account" title="个人信息" value="user_account" rounded="xl"
-            @click="changeView('UserAccount');"></v-list-item>
+            @click="changeView(UserAccount);"></v-list-item>
         </v-list>
 
         <template v-slot:append>
@@ -50,13 +50,9 @@
       <v-main style="height: 100vh; overflow-y: auto;">
         <v-container>
           <v-slide-x-transition>
-            <component
-              :is="currentView"
-              @goto-table-event="currentView = 'Table'"
-              @goto-statistics-event="currentView = 'Statistics'"
-              @goto-account-event="currentView = 'UserAccount'"
-              @change-avatar="(avatar: string) => { studentAvatar = avatar; console.log(studentAvatar)}"
-            ></component>
+            <component :is="currentView" @goto-table-event="currentView = Table"
+              @goto-statistics-event="currentView = Statistics" @goto-account-event="currentView = UserAccount"
+              @change-avatar="(avatar: string) => { studentAvatar = avatar; console.log(studentAvatar) }"></component>
           </v-slide-x-transition>
         </v-container>
       </v-main>
@@ -64,33 +60,37 @@
   </v-card>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 
 import Home from './Home.vue'
 import Statistics from './Statistics.vue'
 import UserAccount from './UserAccount.vue'
 import Table from './Table.vue'
 
-export default {
-  name: 'User',
-  data() {
-    return {
-      currentView: 'Home',
-      studentName: '香风智乃',
-      studentAvatar: '',
-    }
-  },
-  components: {
-    Home, UserAccount, Statistics,Table,
-  },
-  methods: {
-    changeView(view: string) {
-      this.currentView = view
-    },
-    logout() {
-      this.$router.push('/')
-    },
-  },
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
+
+// https://router.vuejs.org/zh/guide/advanced/composition-api.html
+const router = useRouter()
+
+const currentView = ref()
+const studentName = ref<string | undefined>('')
+const studentAvatar = ref<string | undefined>('')
+
+function changeView(view: any) {
+  currentView.value = view
 }
+
+function logout() {
+  window.localStorage.removeItem("name")
+  window.localStorage.removeItem("avatar")
+  window.localStorage.removeItem("token")
+  router.push('/')
+}
+
+onMounted(() => {
+  studentName.value = window.localStorage.getItem("name") ?? '';
+  currentView.value = Home
+})
 
 </script>

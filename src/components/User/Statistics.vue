@@ -3,27 +3,32 @@
     <v-banner sticky style="font-size: 2rem;">统计信息</v-banner>
     <v-card class="card" rounded="xl" variant="elevated" elevation="5">
       <v-container>
-        <v-row>
-          <v-col cols="2">
-            <v-select variant="outlined" clearable v-model="currGrade" label="年级"></v-select>
-          </v-col>
-          <v-col cols="3">
-            <v-select variant="outlined" clearable v-model="currDept" label="院系" @change="onSelectDept"></v-select>
-          </v-col>
-          <v-col cols="3">
-            <v-select variant="outlined" clearable v-model="currMajor" label="专业"></v-select>
-          </v-col>
-          <v-col cols="1">
-            <v-btn variant="tonal" @click="search">检索</v-btn>
-          </v-col>
-        </v-row>
+        <v-form fast-fail @submit.prevent>
+          <v-row>
+            <v-col cols="2">
+              <v-select variant="outlined" clearable :items="gradeList" v-model="currGrade" label="年级"
+                :rules="nutNullRule"></v-select>
+            </v-col>
+            <v-col cols="3">
+              <v-select variant="outlined" clearable :items="Object.keys(deptList)" v-model="currDept" label="院系"
+                @change="onSelectDept" :rules="nutNullRule"></v-select>
+            </v-col>
+            <v-col cols="3">
+              <v-select variant="outlined" clearable :items="currMajorList" v-model="currMajor" label="专业"
+                :rules="nutNullRule"></v-select>
+            </v-col>
+            <v-col cols="1">
+              <v-btn variant="tonal" type="submit" @click="search">检索</v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
         <v-container>
           <v-row>
             <v-col>
-              <Pie :data="typeChartData" :options="ChartOptions"></Pie>          
+              <Pie :data="typeChartData" :options="ChartOptions"></Pie>
             </v-col>
             <v-col>
-              <Pie :data="goneChartData" :options="ChartOptions"></Pie>        
+              <Pie :data="goneChartData" :options="ChartOptions"></Pie>
             </v-col>
           </v-row>
         </v-container>
@@ -48,16 +53,25 @@ import { Pie } from 'vue-chartjs'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-const gradeList = ref([])
+const gradeList = ref([''])
 const deptList = ref([])
-const dept = ref(null)
-const currMajorList = ref([])
+const currMajorList = ref([''])
 const currGrade = ref('')
 const currDept = ref('')
 const currMajor = ref('')
 
 const goneTypeData = ref([])
 const goneData = ref([])
+
+const nutNullRule = [
+  (value) => {
+    if (value !== '') {
+      return true
+    } else {
+      return '请选择'
+    }
+  },
+]
 
 const typeChartData = ref({
   labels: [],
@@ -88,13 +102,12 @@ const requestError = ref('')
 const isErrorHappened = ref(false)
 
 onMounted(() => {
-  axiosInstance.get('/user/list')
+  axiosInstance.post('/user/list')
     .then((response) => {
       console.log(response)
       if (response.data.code === 1) {
-        dept.value = response.data.dept
-        gradeList.value = response.data.grade
-        deptList.value = Object.keys(response.data.dept)
+        gradeList.value = response.data.data.grade
+        deptList.value = Object.keys(response.data.data.dept)
       } else {
         console.error(response.data.message)
         prompt.value = response.data.message
@@ -112,7 +125,7 @@ function onSelectDept() {
 }
 
 function search() {
-  axiosInstance.get('/user/stat', {
+  axiosInstance.post('/user/stat', {
     mode: 1,
     data: {
       grade: currGrade,
@@ -147,5 +160,4 @@ function formatChartParams() {
   margin: 0 auto;
   margin-bottom: 15px;
   margin-top: 15px;
-}
-</style>
+}</style>

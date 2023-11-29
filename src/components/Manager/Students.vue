@@ -282,7 +282,7 @@ onMounted(() => {
 })
 
 async function getInfo({ page, itemsPerPage, sortBy, search }) {
-  axiosInstance.get('/manager/students', {
+  axiosInstance.post('/manager/students', {
     page: page,
     itemsPerPage: itemsPerPage,
     sortBy: sortBy,

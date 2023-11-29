@@ -96,8 +96,7 @@ const passwordConfirmRules = [
 
 async function updateInfo() {
   const hashed_password = calculate_sha256(newPassword.value);
-  axiosInstance
-    .post('/manager/updateinfo', {
+  axiosInstance.post('/manager/updateinfo', {
       id: managerID.value,
       avatar: managerAvatar.value,
       password: hashed_password,

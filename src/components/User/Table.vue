@@ -8,7 +8,7 @@
             <v-text-field variant="outlined" density="compact" label="检索用户..." v-model="search" clearable></v-text-field>
           </v-col>
           <v-col>
-            <v-btn color="indigo-accent-1" @click="loadItems()">搜索</v-btn>
+            <v-btn color="indigo-accent-1" @click="loadItems">搜索</v-btn>
           </v-col>
         </v-row>
         <v-row>
@@ -16,15 +16,89 @@
             <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items-length="totalItems"
               :items="tableData" :loading="loading" :search="search" class="elevation-1" item-value="name"
               @update:options="loadItems" loading-text="正在加载数据...">
+              <template v-slot:item.moreInfo="{ item }">
+                <v-btn variant="tonal" @click="moreInfo(item)">查看</v-btn> 
+              </template>
               <template v-slot:bottom>
                 <div class="text-center pt-2">
-                  <v-pagination rounded="circle" v-model="page" :length="pageCount"></v-pagination>
+                  <v-pagination rounded="circle" v-model="page" @change="loadItems" :length="pageCount"></v-pagination>
                 </div>
               </template>
             </v-data-table-server>
           </v-col>
         </v-row>
       </v-container>
+      <v-dialog v-model="dialog" max-width="80vw">
+        <v-card rounded="xl">
+          <v-card-title>
+            <span class="text-h5">查看详情</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col>
+                  姓名：{{ currItem.name }}
+                </v-col>
+                <v-col>
+                  性别：{{ currItem.gender }}
+                </v-col>
+                <v-col>
+                  年级：{{ currItem.grade }}
+                </v-col>
+                <v-col>
+                  院系：{{ currItem.dept }}
+                </v-col>
+                <v-col>
+                  专业：{{ currItem.major }}
+                </v-col>
+                <v-col>
+                  班级：{{ currItem.class }}
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  是否已毕业：{{ currItem.graduated }}
+                </v-col>
+                <v-col>
+                  去向类型：{{ currItem.goneType }}
+                </v-col>
+                <v-col>
+                  去向单位：{{ currItem.gone }}
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  QQ：{{ currItem.qq }}
+                </v-col>
+                <v-col>
+                  电话：{{ currItem.phone }}
+                </v-col>
+                <v-col>
+                  微信：{{ currItem.wechat }}
+                </v-col>
+                <v-col>
+                  邮箱：{{ currItem.mail }}
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  其他联系方式：{{ currItem.others }}
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  备注：{{ currItem.comments }}
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue-darken-1" variant="text" @click="dialog = false">确定</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card>
     <v-fade-transition>
       <v-alert v-if="isErrorHappened" rounded="xl" variant="elevated" elevation="5" class="card">
@@ -38,9 +112,9 @@
 // 语言原本应该用TypeScript的，但遇到了一些类型问题，不想深挖，就改JavaScript了
 import { VDataTableServer } from 'vuetify/labs/VDataTable'
 import axiosInstance from '@/plugins/util/axiosInstance'
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
-const tableData = []
+const tableData = ref([])
 const search = ref('')
 const loading = ref(true)
 const totalItems = ref(0)
@@ -51,6 +125,15 @@ const page = ref(0)
 const sortBy = ref([])
 
 const requestError = ref(null)
+
+const dialog = ref(false)
+const currItem = ref(null)
+
+function moreInfo(item) {
+  console.log(item)
+  currItem.value = item
+  dialog.value = true
+}
 
 const headers = ref([
   {
@@ -91,19 +174,16 @@ const headers = ref([
   },
 ])
 
-// 页面挂载时加载第一页数据
-onMounted(() => {
-  loadItems({ page: 1, itemsPerPage, sortBy })
-})
-
 async function request({ page, itemsPerPage, sortBy, search }) {
-  axiosInstance.get('/user/table', {
-    page: page,
-    itemsPerPage: itemsPerPage,
-    sortBy: sortBy,
-    search: search,
-  }).then((response) => {
+  try {
+    const response = await axiosInstance.post('/user/table', {
+      page: page,
+      itemsPerPage: itemsPerPage,
+      sortBy: sortBy,
+      search: search,
+    })
     console.log(response)
+
     if (response.data.code === 1) {
       console.log('请求成功，请求到' + response.data.data.length + '条信息')
       return response.data
@@ -111,46 +191,33 @@ async function request({ page, itemsPerPage, sortBy, search }) {
       isErrorHappened.value = true
       console.log('请求失败！')
     }
-  }).catch((error) => {
+  } catch (error) {
     console.log(error)
     requestError.value = error.message
     isErrorHappened.value = true
-  });
+  }
 }
 
 async function loadItems({ page, itemsPerPage, sortBy }) {
   loading.value = true
-  const result = await request({ page, itemsPerPage, sortBy, search })
+  console.log(page)
+  console.log(itemsPerPage)
+  console.log(sortBy)
+  const result = await request({
+    page,
+    itemsPerPage,
+    sortBy,
+    search: search.value
+  })
+  console.log("result: ", result)
   pageCount.value = result.pageCount
   const packedData = result.data
   loading.value = false
   if (packedData.length !== 0) {
+    console.log(packedData)
     tableData.value = packedData
   }
 }
-
-// 这个函数有必要存在吗？
-// function updateInfo(packedData) {
-//   tableData = []
-//   packedData.forEach(e => {
-//     let obj = {}
-//     obj.name = e.name
-//     obj.avatar = e.avatar
-//     obj.gender = e.gender
-//     obj.grade = e.grade
-//     obj.major = e.major
-//     obj.class = e.class
-//     obj.goneType = e.goneType
-//     obj.gone = e.gone
-//     obj.wechat = e.wechat
-//     obj.qq = e.qq
-//     obj.phone = e.phone
-//     obj.mail = e.mail
-//     obj.others = e.others
-//     obj.comments = e.comments
-//     tableData.push(obj)
-//   })
-// }
 
 </script>
 

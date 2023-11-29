@@ -193,7 +193,7 @@ const contactOthers = ref('')
 
 const comments = ref('')
 
-const studentID = ref('123456')
+const studentID = ref('999999')
 const newPassword = ref('')
 const newPasswordConfirmed = ref('')
 
@@ -226,14 +226,35 @@ const passwordConfirmRules = [
 ]
 
 onMounted(() => {
+  let id = window.localStorage.getItem("id")
+  if (id) {
+    studentID.value = id
+  }
   axiosInstance
-    .get('/user/getinfo')
+    .post('/user/getinfo', {
+      id: studentID.value
+    })
     .then((response) => {
       console.log(response)
       if (response.data.code === 1) {
         console.log('请求成功')
         isGetInfoErrorHappened.value = false
-        // TODO
+        studentName.value = response.data.data.name
+        studentGender.value = response.data.data.gender
+        studentGrade.value = response.data.data.grade
+        studentDept.value = response.data.data.dept
+        studentMajor.value = response.data.data.major
+        studentClass.value = response.data.data.class
+        studentGraduated.value = response.data.data.graduated
+        goneType.value = response.data.data.goneType
+        goneTypeList.value = response.data.data.goneTypeList
+        goneInstitute.value = response.data.data.gone
+        comments.value = response.data.data.comments
+        contactMail.value = response.data.data.mail
+        contactPhone.value = response.data.data.phone
+        contactQQ.value = response.data.data.qq
+        contactWeChat.value = response.data.data.wechat
+        contactOthers.value = response.data.data.others
       } else {
         isGetInfoErrorHappened.value = true
         console.log('请求失败！')

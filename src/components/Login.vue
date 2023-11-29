@@ -73,7 +73,7 @@ function onLoginSubmit() {
   const hashed_password = calculate_sha256(password.value)
 
   axiosInstance.post('/login/user', {
-    id: userID,
+    id: userID.value,
     password: hashed_password,
   }).then((response) => {
     if (response.data.code === 0) {

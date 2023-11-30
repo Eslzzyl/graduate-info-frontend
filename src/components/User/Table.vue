@@ -7,9 +7,6 @@
           <v-col cols="3">
             <v-text-field variant="outlined" density="compact" label="检索用户..." v-model="search" clearable></v-text-field>
           </v-col>
-          <v-col>
-            <v-btn color="indigo-accent-1" @click="loadItems">搜索</v-btn>
-          </v-col>
         </v-row>
         <v-row>
           <v-col>
@@ -21,7 +18,7 @@
               </template>
               <template v-slot:bottom>
                 <div class="text-center pt-2">
-                  <v-pagination rounded="circle" v-model="page" @change="loadItems" :length="pageCount"></v-pagination>
+                  <v-pagination rounded="circle" v-model="page" :length="pageCount"></v-pagination>
                 </div>
               </template>
             </v-data-table-server>
@@ -112,7 +109,7 @@
 // 语言原本应该用TypeScript的，但遇到了一些类型问题，不想深挖，就改JavaScript了
 import { VDataTableServer } from 'vuetify/labs/VDataTable'
 import axiosInstance from '@/plugins/util/axiosInstance'
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const tableData = ref([])
 const search = ref('')
@@ -134,6 +131,14 @@ function moreInfo(item) {
   currItem.value = item
   dialog.value = true
 }
+
+watch(page, () => {
+  loadItems({
+    page: page.value,
+    itemsPerPage: itemsPerPage.value,
+    sortBy: sortBy.value
+  })
+})
 
 const headers = ref([
   {

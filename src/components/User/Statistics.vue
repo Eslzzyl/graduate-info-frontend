@@ -11,7 +11,7 @@
             </v-col>
             <v-col cols="3">
               <v-select variant="outlined" clearable :items="Object.keys(deptList)" v-model="currDept" label="院系"
-                @change="onSelectDept" :rules="nutNullRule"></v-select>
+                :rules="nutNullRule"></v-select>
             </v-col>
             <v-col cols="3">
               <v-select variant="outlined" clearable :items="currMajorList" v-model="currMajor" label="专业"
@@ -47,7 +47,8 @@
 
 <script setup>
 import axiosInstance from '@/plugins/util/axiosInstance';
-import { ref, onMounted } from 'vue';
+import { getRanomColorList } from '@/plugins/util/color';
+import { ref, onMounted, watch } from 'vue';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'vue-chartjs'
 
@@ -107,7 +108,8 @@ onMounted(() => {
       console.log(response)
       if (response.data.code === 1) {
         gradeList.value = response.data.data.grade
-        deptList.value = Object.keys(response.data.data.dept)
+        console.log(response.data.data.dept)
+        deptList.value = response.data.data.dept
       } else {
         console.error(response.data.message)
         prompt.value = response.data.message
@@ -120,17 +122,19 @@ onMounted(() => {
     })
 })
 
-function onSelectDept() {
+watch(currDept, () => {
+  console.log(deptList.value)
+  console.log(currDept.value)
   currMajorList.value = deptList.value[currDept.value]
-}
+})
 
 function search() {
   axiosInstance.post('/user/stat', {
     mode: 1,
     data: {
-      grade: currGrade,
-      dept: currDept,
-      major: currMajor,
+      grade: currGrade.value,
+      dept: currDept.value,
+      major: currMajor.value,
     }
   }).then((response) => {
     if (response.data.code === 1) {
@@ -150,7 +154,13 @@ function search() {
 }
 
 function formatChartParams() {
+  typeChartData.value.labels = Object.keys(goneTypeData.value)
+  typeChartData.value.datasets.backgroundColor = getRanomColorList(Object.keys(goneTypeData.value).length)
+  typeChartData.value.datasets.data = Object.values(goneTypeData.value)
 
+  goneChartData.value.labels = Object.keys(goneData.value)
+  goneChartData.value.datasets.backgroundColor = getRanomColorList(Object.keys(goneData.value).length)
+  goneChartData.value.datasets.data = Object.values(goneData.value)
 }
 
 </script>

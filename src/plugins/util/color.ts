@@ -149,3 +149,25 @@ export function getSunGlareColor(): string {
 
   return currColor
 }
+
+export function getRandomColorList(count: number): string[] {
+  const list = [
+    "#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9", "#C5CAE9", "#BBDEFB",
+    "#B3E5FC", "#B2EBF2", "#B2DFDB", "#C8E6C9", "#DCEDC8", "#F0F4C3",
+    "#FFF9C4", "#FFECB3", "#FFE0B2", "#FFCCBC", "#D7CCC8", "#CFD8DC",
+    "#BDBDBD"
+  ]
+
+  if (count <= 0) {
+    return []; // 返回空数组，因为数量无效
+  }
+
+  const result: string[] = [];
+
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * list.length);
+    result.push(list[randomIndex]);
+  }
+
+  return result;
+}

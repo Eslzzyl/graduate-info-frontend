@@ -72,7 +72,8 @@ function onLoginSubmit() {
   }
   const hashed_password = calculate_sha256(password.value)
 
-  axiosInstance.post('/login/user', {
+  const url = userType.value === 'user' ? '/login/user' : '/login/manager'
+  axiosInstance.post(url, {
     id: userID.value,
     password: hashed_password,
   }).then((response) => {

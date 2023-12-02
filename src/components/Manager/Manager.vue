@@ -11,11 +11,11 @@
 
         <v-list nav>
           <v-list-item prepend-icon="mdi-table" title="用户管理" value="users" rounded="xl"
-            @click="changeView('Users');"></v-list-item>
+            @click="changeView(Users);"></v-list-item>
           <v-list-item prepend-icon="mdi-pencil" title="录入学生信息" value="students" rounded="xl"
-            @click="changeView('Students');"></v-list-item>
+            @click="changeView(Students);"></v-list-item>
           <v-list-item prepend-icon="mdi-account" title="个人信息" value="manager_account" rounded="xl"
-            @click="changeView('ManagerAccount');"></v-list-item>
+            @click="changeView(ManagerAccount);"></v-list-item>
         </v-list>
 
         <template v-slot:append>
@@ -57,31 +57,35 @@
   </v-card>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Users from './Users.vue'
 import ManagerAccount from './ManagerAccount.vue'
 import Students from './Students.vue'
 
-export default {
-  name: 'Manager',
-  data() {
-    return {
-      currentView: 'Users',
-      managerName: '爱丽丝·卡塔雷特',
-      managerAvatar: '',
-    }
-  },
-  components: {
-    Users, Students, ManagerAccount,
-  },
-  methods: {
-    changeView(view: string) {
-      this.currentView = view
-    },
-    logout() {
-      this.$router.push('/')
-    },
-  },
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+// https://router.vuejs.org/zh/guide/advanced/composition-api.html
+const router = useRouter()
+
+const currentView = ref()
+const managerName = ref<string | undefined>('')
+const managerAvatar = ref<string | undefined>('')
+
+function changeView(view: any) {
+  currentView.value = view
 }
+
+function logout() {
+  window.localStorage.removeItem("name")
+  window.localStorage.removeItem("avatar")
+  window.localStorage.removeItem("token")
+  router.push('/')
+}
+
+onMounted(() => {
+  managerName.value = window.localStorage.getItem("name") ?? '';
+  currentView.value = Users
+})
 
 </script>

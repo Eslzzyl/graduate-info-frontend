@@ -7,9 +7,6 @@
           <v-col cols="3">
             <v-text-field variant="outlined" density="compact" label="检索用户..." v-model="search" clearable></v-text-field>
           </v-col>
-          <v-col>
-            <v-btn color="indigo-accent-1" @click="loadItems()">搜索</v-btn>
-          </v-col>
         </v-row>
         <v-row>
           <v-col>
@@ -130,7 +127,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { VDataTableServer } from 'vuetify/labs/VDataTable';
 import axiosInstance from '@/plugins/util/axiosInstance';
 
@@ -209,6 +206,14 @@ function editItem(item) {
   dialog.value = true
 }
 
+watch(page, () => {
+  loadItems({
+    page: page.value,
+    itemsPerPage: itemsPerPage.value,
+    sortBy: sortBy.value
+  })
+})
+
 function deleteItemConfirmed() {
   const currID = currItem.value.id
   users.value.splice(currItem.value, 1)
@@ -234,19 +239,14 @@ function deleteItemConfirmed() {
   dialogDelete.value = false
 }
 
-// 页面挂载时加载第一页数据
-onMounted(() => {
-  loadItems({ page: 1, itemsPerPage, sortBy })
-})
-
-async function getInfo({ page, itemsPerPage, sortBy, search }) {
-  axiosInstance.post('/manager/users', {
-    page: page,
-    itemsPerPage: itemsPerPage,
-    sortBy: sortBy,
-    search: search,
-  }).then((response) => {
-    console.log(response)
+async function request({ page, itemsPerPage, sortBy, search }) {
+  try {
+    const response = await axiosInstance.post('/manager/users', {
+      page: page,
+      itemsPerPage: itemsPerPage,
+      sortBy: sortBy,
+      search: search,
+    })
     if (response.data.code === 1) {
       console.log('请求成功，请求到' + response.data.data.length + '条信息')
       return response.data
@@ -255,16 +255,18 @@ async function getInfo({ page, itemsPerPage, sortBy, search }) {
       snackbar.value = true
       console.error('请求失败！')
     }
-  }).catch((error) => {
+  } catch (error) {
     console.error(error)
     requestError.value = error.message
     isErrorHappened.value = true
-  });
+  }
 }
+
 
 async function loadItems({ page, itemsPerPage, sortBy }) {
   loading.value = true
-  const result = await getInfo({ page, itemsPerPage, sortBy, search })
+  console.log(page)
+  const result = await request({ page, itemsPerPage, sortBy, search: search.value })
   // const result = {
   //   data: [{
   //     id: '12345678',

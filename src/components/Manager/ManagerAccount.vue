@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import axiosInstance from '@/plugins/util/axiosInstance';
 import { calculate_sha256 } from '@/plugins/util/encrypt';
@@ -93,6 +93,12 @@ const passwordConfirmRules = [
     }
   },
 ]
+
+onMounted(() => {
+  managerID.value = window.localStorage.getItem('id') as string
+  managerName.value = window.localStorage.getItem('name') as string
+  managerAvatar.value = window.localStorage.getItem('avatar') as string
+})
 
 async function updateInfo() {
   const hashed_password = calculate_sha256(newPassword.value);

@@ -47,7 +47,7 @@
 
 <script setup>
 import axiosInstance from '@/plugins/util/axiosInstance';
-import { getRanomColorList } from '@/plugins/util/color';
+import { getRandomColorList } from '@/plugins/util/color';
 import { ref, onMounted, watch } from 'vue';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'vue-chartjs'
@@ -155,11 +155,11 @@ function search() {
 
 function formatChartParams() {
   typeChartData.value.labels = Object.keys(goneTypeData.value)
-  typeChartData.value.datasets.backgroundColor = getRanomColorList(Object.keys(goneTypeData.value).length)
+  typeChartData.value.datasets.backgroundColor = getRandomColorList(Object.keys(goneTypeData.value).length)
   typeChartData.value.datasets.data = Object.values(goneTypeData.value)
 
   goneChartData.value.labels = Object.keys(goneData.value)
-  goneChartData.value.datasets.backgroundColor = getRanomColorList(Object.keys(goneData.value).length)
+  goneChartData.value.datasets.backgroundColor = getRandomColorList(Object.keys(goneData.value).length)
   goneChartData.value.datasets.data = Object.values(goneData.value)
 }
 

@@ -90,7 +90,6 @@ function onLoginSubmit() {
 
       window.localStorage.setItem("id", userID.value)
       window.localStorage.setItem("hashed_password", hashed_password)
-      const user_type = response.data.user_type
       if (userType.value === 'user') {
         router.push('/user')
       } else if (userType.value === 'manager') {

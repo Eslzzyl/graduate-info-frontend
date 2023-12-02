@@ -89,7 +89,7 @@ function logout() {
 }
 
 onMounted(() => {
-  studentName.value = window.localStorage.getItem("name") ?? '';
+  studentName.value = window.localStorage.getItem("name") as string;
   currentView.value = Home
 })
 

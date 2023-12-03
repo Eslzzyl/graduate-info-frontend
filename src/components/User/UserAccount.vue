@@ -268,24 +268,34 @@ onMounted(() => {
 
 async function updateInfo() {
   const hashed_password = calculate_sha256(newPassword.value)
-  axiosInstance
-    .post('/user/updateinfo', {
-      // TODO
-    }).then((response) => {
-      console.log(response)
-      if (response.data.code === 1) {
-        console.log('请求成功')
-        isUpdateInfoErrorHappened.value = false
-      } else {
-        isUpdateInfoErrorHappened.value = true
-        console.error('请求失败！', response.data.message)
-        requestError.value = response.data.message
-      }
-    }).catch((error) => {
-      console.error(error)
-      requestError.value = error.message
+  axiosInstance.post('/user/updateinfo', {
+    id: studentID.value,
+    password: hashed_password,
+    avatar: studentAvatar.value,
+    graduated: studentGraduated.value,
+    goneType: goneType.value,
+    gone: goneInstitute.value,
+    comments: comments.value,
+    mail: contactMail.value,
+    phone: contactPhone.value,
+    wechat: contactWeChat.value,
+    qq: contactQQ.value,
+    others: contactOthers.value
+  }).then((response) => {
+    console.log(response)
+    if (response.data.code === 1) {
+      console.log('请求成功')
+      isUpdateInfoErrorHappened.value = false
+    } else {
       isUpdateInfoErrorHappened.value = true
-    })
+      console.error('请求失败！', response.data.message)
+      requestError.value = response.data.message
+    }
+  }).catch((error) => {
+    console.error(error)
+    requestError.value = error.message
+    isUpdateInfoErrorHappened.value = true
+  })
 }
 
 // 这个函数仅仅用于唤起文件选择对话框，不承载任何业务逻辑

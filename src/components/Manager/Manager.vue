@@ -12,7 +12,7 @@
         <v-list nav>
           <v-list-item prepend-icon="mdi-table" title="用户管理" value="users" rounded="xl"
             @click="changeView(Users);"></v-list-item>
-          <v-list-item prepend-icon="mdi-pencil" title="录入学生信息" value="students" rounded="xl"
+          <v-list-item prepend-icon="mdi-account-circle-outline" title="查看学生信息" value="students" rounded="xl"
             @click="changeView(Students);"></v-list-item>
           <v-list-item prepend-icon="mdi-account" title="个人信息" value="manager_account" rounded="xl"
             @click="changeView(ManagerAccount);"></v-list-item>

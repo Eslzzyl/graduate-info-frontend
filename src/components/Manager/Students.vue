@@ -7,13 +7,6 @@
           <v-col cols="3">
             <v-text-field variant="outlined" density="compact" label="检索学生..." v-model="search" clearable></v-text-field>
           </v-col>
-          <v-col>
-            <v-btn color="indigo-accent-1" @click="loadItems()">搜索</v-btn>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="2">
-            <v-btn color="indigo-accent-1" @click="dialog = true">新增学生</v-btn>
-          </v-col>
         </v-row>
         <v-row>
           <v-col>
@@ -21,7 +14,7 @@
               :items-length="totalItems" :loading="loading" :search="search" class="elevation-1"
               @update:options="loadItems" loading-text="正在加载数据...">
               <template v-slot:item.actions="{ item }">
-                <v-btn variant="tonal" color="red-accent-2" @click="dialogDelete = true; currItem.value = item">删除</v-btn>
+                <v-btn variant="tonal" @click="onAddItem(item)">新增</v-btn>
               </template>
               <template v-slot:bottom>
                 <div class="text-center pt-2">
@@ -32,63 +25,83 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-dialog v-model="dialogDelete" max-width="30vw">
-        <v-card>
-          <v-card-title class="text-h5">确定删除</v-card-title>
+      <v-dialog v-model="dialogAdd" max-width="80vw">
+        <v-card rounded="xl">
+          <v-card-title>
+            <span class="text-h5">新增去向信息</span>
+          </v-card-title>
           <v-card-text>
-            你确定要删除这条记录吗？删除操作不可撤销！
+            <v-container>
+              <v-row>
+                <v-col>
+                  学号：{{ currItem.id }}
+                </v-col>
+                <v-col>
+                  姓名：{{ currItem.name }}
+                </v-col>
+                <v-col cols="1">
+                  性别：{{ currItem.gender }}
+                </v-col>
+                <v-col>
+                  年级：{{ currItem.grade }}
+                </v-col>
+                <v-col>
+                  院系：{{ currItem.dept }}
+                </v-col>
+                <v-col>
+                  专业：{{ currItem.major }}
+                </v-col>
+                <v-col>
+                  班级：{{ currItem.class }}
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-select variant="outlined" clearable v-model="currItem.graduated" label="是否已毕业"
+                    :items="studentGraduatedList"></v-select>
+                </v-col>
+                <v-col>
+                  <v-select variant="outlined" clearable v-model="currItem.goneType" label="去向类型"
+                    :items="goneTypeList"></v-select>
+                </v-col>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.gone" label="去向单位"
+                    hint="输入工作单位时，建议带上岗位；输入学校时，建议带上专业方向" persistent-hint></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-textarea variant="outlined" v-model="currItem.comments" label="备注"
+                    hint="可以在这里输入其他想说的内容，如上岸经验、额外的自我介绍等" persistent-hint></v-textarea>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.qq" label="QQ"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.phone" label="电话"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.wechat" label="微信"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.mail" label="邮箱"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-textarea variant="outlined" v-model="currItem.others" label="其他联系方式"></v-textarea>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-card-text>
+
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn variant="tonal" color="indigo-accent-1" @click="dialogDelete = false">取消</v-btn>
-            <v-btn variant="tonal" color="red-accent-2" @click="deleteItemConfirmed()">确认</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="dialogAdd = false">取消</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="onSaveItem">确定</v-btn>
           </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="dialog" max-width="60vw">
-        <v-card rounded="xl">
-          <v-form fast-fail @submit.prevent>
-            <v-card-title>
-              <span class="text-h5">新增学生</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="4">
-                    <v-text-field variant="outlined" label="学号" clearable v-model="studentID" :rules="idRules"></v-text-field>
-                  </v-col>
-                  <v-col cols="4">
-                    <v-text-field variant="outlined" label="姓名" clearable v-model="studentName"></v-text-field>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-select variant="outlined" label="性别" clearable v-model="studentGender"
-                      :items="['男', '女']"></v-select>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col cols="3">
-                    <v-text-field variant="outlined" label="年级" clearable v-model="studentGrade"></v-text-field>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-text-field variant="outlined" label="院系" clearable v-model="studentDept"></v-text-field>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-text-field variant="outlined" label="专业" clearable v-model="studentMajor"></v-text-field>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-select variant="outlined" label="班级" clearable v-model="studentClass"
-                      :items="['1', '2', '3', '4', '5']"></v-select>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="dialog = false">取消</v-btn>
-              <v-btn color="blue-darken-1" variant="text" type="submit" @click="newItemSaved()">保存</v-btn>
-            </v-card-actions>
-          </v-form>
         </v-card>
       </v-dialog>
     </v-card>
@@ -105,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { VDataTableServer } from 'vuetify/labs/VDataTable';
 import axiosInstance from '@/plugins/util/axiosInstance';
 
@@ -119,29 +132,8 @@ const sortBy = ref([])
 const search = ref('')
 const requestError = ref(null)
 
-const studentID = ref('')
-const studentName = ref('')
-const studentGender = ref('')
-const studentGrade = ref('')
-const studentDept = ref('')
-const studentMajor = ref('')
-const studentClass = ref('')
-
-const dialog = ref(false)
-const dialogDelete = ref(false)
-
 const snackbar = ref(false)
 const prompt = ref('')
-
-const idRules = [
-  (value) => {
-    if (value?.length == 10) {
-      return true
-    } else {
-      return '学号长度有误'
-    }
-  },
-]
 
 const headers = ref([
   {
@@ -191,122 +183,127 @@ const headers = ref([
     align: 'center',
     sortable: false,
     key: 'actions',
-  },
+  }
 ])
 
 const students = ref([])
-const currItem = ref(null)
 
-// 删除学生信息
-function deleteItemConfirmed() {
-  const currID = currItem.value.id
-  students.value.splice(currItem.value, 1)
-  axiosInstance.post('/manager/delete/students', {
-    id: currID,
-  }).then((response) => {
-    console.log(response)
-    if (response.data.code === 1) {
-      console.log('删除成功')
-      prompt.value = '删除成功'
-      snackbar.value = true
-    } else {
-      console.error('删除失败')
-      prompt.value = '删除失败'
-      snackbar.value = true
-    }
-  }).catch((error) => {
-    console.error(error)
-    requestError.value = error
-    isErrorHappened.value = true
-  });
-  dialogDelete.value = false
+watch(page, () => {
+  loadItems({
+    page: page.value,
+    itemsPerPage: itemsPerPage.value,
+    sortBy: sortBy.value
+  })
+})
+
+const dialogAdd = ref(false)
+const currItem = ref(null)
+const goneTypeList = [
+  "考研已上岸",
+  "考研准备中",
+  "推免",
+  "考公已上岸",
+  "考公准备中",
+  "求职中",
+  "企业就业",
+  "出国出境深造",
+  "其他"
+]
+const studentGraduatedList = ['是', '否']
+
+function onAddItem(item) {
+  currItem.value = item
+  currItem.value.graduated = ''
+  currItem.value.goneType = ''
+  currItem.value.gone = ''
+  currItem.value.comments = ''
+  currItem.value.qq = ''
+  currItem.value.phone = ''
+  currItem.value.wechat = ''
+  currItem.value.mail = ''
+  currItem.value.others = ''
+  dialogAdd.value = true
 }
 
-// 保存学生信息
-function newItemSaved() {
-  if (studentID.value === '' || studentName.value === '' || studentGender.value === '' || studentGrade.value === '' || studentDept.value === '' || studentMajor.value === '' || studentClass.value === '') {
-    prompt.value = '请将信息输入完整'
+function onSaveItem() {
+  console.log(currItem.value)
+  if (currItem.value.goneType === '') {
+    prompt.value = "请选择去向类型"
     snackbar.value = true
+    dialogAdd.value = false
     return
   }
 
-  students.value.push({
-    id: studentID.value,
-    name: studentName.value,
-    gender: studentGender.value,
-    grade: studentGrade.value,
-    dept: studentDept.value,
-    major: studentMajor.value,
-    class: studentClass.value,
-  })
-  // 清空学生信息
-  studentID.value = ''
-  studentName.value = ''
-  studentGender.value = ''
-  studentGrade.value = ''
-  studentDept.value = ''
-  studentMajor.value = ''
-  studentClass.value = ''
-
-  axiosInstance.post('/manager/add', {
-    id: studentID.value,
-    name: studentName.value,
-    gender: studentGender.value,
-    grade: studentGrade.value,
-    dept: studentDept.value,
-    major: studentMajor.value,
-    class: studentClass.value,
+  dialogAdd.value = false
+  
+  axiosInstance.post("/manager/add", {
+    id: currItem.value.id,
+    graduated: currItem.value.graduated,
+    goneType: currItem.value.goneType,
+    gone: currItem.value.gone,
+    // private 还没加
+    comments: currItem.value.comments,
+    mail: currItem.value.mail,
+    phone: currItem.value.phone,
+    wechat: currItem.value.wechat,
+    qq: currItem.value.qq,
+    others: currItem.value.others
   }).then((response) => {
-    console.log(response)
     if (response.data.code === 1) {
-      console.log('新增学生信息成功')
-      prompt.value = '新增学生信息成功'
+      prompt.value = "保存成功"
       snackbar.value = true
     } else {
-      console.error('新增学生信息失败:', response.data.message)
-      prompt.value = '新增学生信息失败: ' + response.data.message
+      prompt.value = "保存失败：" + response.data.message
       snackbar.value = true
     }
   }).catch((error) => {
     console.error(error)
-    requestError.value = error
+    requestError.value = error.message
     isErrorHappened.value = true
-  });
-
-  dialog.value = false
+  })
+  
+  currItem.value = null
 }
 
-// 页面挂载时加载第一页数据
-onMounted(() => {
-  loadItems({ page: 1, itemsPerPage, sortBy })
-})
-
-async function getInfo({ page, itemsPerPage, sortBy, search }) {
-  axiosInstance.post('/manager/students', {
-    page: page,
-    itemsPerPage: itemsPerPage,
-    sortBy: sortBy,
-    search: search,
-  }).then((response) => {
+async function request({ page, itemsPerPage, sortBy, search }) {
+  try {
+    const response = axiosInstance.post('/manager/students', {
+      page: page,
+      itemsPerPage: itemsPerPage,
+      sortBy: sortBy,
+      search: search,
+    });
     console.log(response)
     if (response.data.code === 1) {
       console.log('请求成功，请求到' + response.data.data.length + '条信息')
-      return response.data
+      return (await response).data
     } else {
       prompt.value = '请求失败: ' + response.data.message
       snackbar.value = true
       console.error('请求失败: ', response.data.message)
     }
-  }).catch((error) => {
+  } catch (error) {
     console.error(error)
     requestError.value = error
     isErrorHappened.value = true
-  });
+  }
 }
 
 async function loadItems({ page, itemsPerPage, sortBy }) {
   loading.value = true
-  const result = await getInfo({ page, itemsPerPage, sortBy, search })
+  const result = await request({ page, itemsPerPage, sortBy, search: search.value })
+  // const result = {
+  //   data: [{
+  //     id: '12345678',
+  //     name: '香风智乃',
+  //     gender: '女',
+  //     grade: '2019',
+  //     dept: '食品学院',
+  //     major: '咖啡制作技术',
+  //     class: '2',
+  //   },],
+  //   pageCount: 1,
+  // }
   pageCount.value = result.pageCount
   const packedData = result.data
   loading.value = false

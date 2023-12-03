@@ -14,8 +14,8 @@
               :items-length="totalItems" :loading="loading" :search="search" class="elevation-1"
               @update:options="loadItems" loading-text="正在加载数据...">
               <template v-slot:item.actions="{ item }">
-                <v-icon icon="mdi-information-outline" size="small" class="me-2" @click="editItem(item)"></v-icon>
-                <v-icon icon="mdi-delete" size="small" @click="dialogDelete = true; currItem.value = item"></v-icon>
+                <v-icon icon="mdi-pencil" size="small" class="me-2" @click="onEditItem(item)"></v-icon>
+                <v-icon icon="mdi-delete" size="small" @click="onDeleteItem(item)"></v-icon>
               </template>
               <template v-slot:bottom>
                 <div class="text-center pt-2">
@@ -39,11 +39,12 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-dialog v-model="dialog" max-width="80vw">
+      <v-dialog v-model="dialogEdit" max-width="80vw">
         <v-card rounded="xl">
           <v-card-title>
             <span class="text-h5">编辑用户信息</span>
           </v-card-title>
+          <v-card-subtitle>如果只需要查看，请不要修改内容</v-card-subtitle>
           <v-card-text>
             <v-container>
               <v-row>
@@ -53,7 +54,7 @@
                 <v-col>
                   姓名：{{ currItem.name }}
                 </v-col>
-                <v-col>
+                <v-col cols="1">
                   性别：{{ currItem.gender }}
                 </v-col>
                 <v-col>
@@ -71,37 +72,40 @@
               </v-row>
               <v-row>
                 <v-col>
-                  是否已毕业：{{ currItem.graduated }}
+                  <v-select variant="outlined" clearable v-model="currItem.graduated" label="是否已毕业"
+                    :items="studentGraduatedList"></v-select>
                 </v-col>
                 <v-col>
-                  去向类型：{{ currItem.goneType }}
+                  <v-select variant="outlined" clearable v-model="currItem.goneType" label="去向类型" :items="goneTypeList"></v-select>
                 </v-col>
                 <v-col>
-                  去向单位：{{ currItem.gone }}
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  QQ：{{ currItem.qq }}
-                </v-col>
-                <v-col>
-                  电话：{{ currItem.phone }}
-                </v-col>
-                <v-col>
-                  微信：{{ currItem.wechat }}
-                </v-col>
-                <v-col>
-                  邮箱：{{ currItem.mail }}
+                  <v-text-field variant="outlined" clearable v-model="currItem.gone" label="去向单位"
+                    hint="输入工作单位时，建议带上岗位；输入学校时，建议带上专业方向" persistent-hint></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  其他联系方式：{{ currItem.others }}
+                  <v-textarea variant="outlined" v-model="currItem.comments" label="备注" hint="可以在这里输入其他想说的内容，如上岸经验、额外的自我介绍等"
+                    persistent-hint></v-textarea>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col>
-                  备注：{{ currItem.comments }}
+                  <v-text-field variant="outlined" clearable v-model="currItem.qq" label="QQ"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.phone" label="电话"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.wechat" label="微信"></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field variant="outlined" clearable v-model="currItem.mail" label="邮箱"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-textarea variant="outlined" v-model="currItem.others" label="其他联系方式"></v-textarea>
                 </v-col>
               </v-row>
             </v-container>
@@ -109,7 +113,8 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue-darken-1" variant="text" @click="dialog = false">确定</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="dialogEdit = false">取消</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="onSaveItem">确定</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -141,11 +146,24 @@ const sortBy = ref([])
 const search = ref('')
 const requestError = ref(null)
 
-const dialog = ref(false)
+const dialogEdit = ref(false)
 const dialogDelete = ref(false)
 
 const snackbar = ref(false)
 const prompt = ref('')
+
+const goneTypeList = [
+  "考研已上岸",
+  "考研准备中",
+  "推免",
+  "考公已上岸",
+  "考公准备中",
+  "求职中",
+  "企业就业",
+  "出国出境深造",
+  "其他"
+]
+const studentGraduatedList = ['是', '否']
 
 const headers = ref([
   {
@@ -201,9 +219,47 @@ const headers = ref([
 const users = ref([])
 const currItem = ref(null)
 
-function editItem(item) {
+function onDeleteItem(item) {
+  console.log(item)
   currItem.value = item
-  dialog.value = true
+  dialogDelete.value = true
+}
+
+function onEditItem(item) {
+  console.log(item)
+  currItem.value = item
+  dialogEdit.value = true
+}
+
+function onSaveItem() {
+  console.log(currItem.value)
+  axiosInstance.post("/manager/edit", {
+    id: currItem.value.id,
+    graduated: currItem.value.graduated,
+    goneType: currItem.value.goneType,
+    gone: currItem.value.gone,
+    // private 还没加
+    comments: currItem.value.comments,
+    mail: currItem.value.mail,
+    phone: currItem.value.phone,
+    wechat: currItem.value.wechat,
+    qq: currItem.value.qq,
+    others: currItem.value.others
+  }).then((response) => {
+    if (response.data.code === 1) {
+      prompt.value = "保存成功"
+      snackbar.value = true
+    } else {
+      prompt.value = "保存失败：" + response.data.message
+      snackbar.value = true
+    }
+  }).catch((error) => {
+    console.error(error)
+    requestError.value = error.message
+    isErrorHappened.value = true
+  })
+  
+  dialogEdit.value = false
 }
 
 watch(page, () => {
@@ -218,7 +274,7 @@ function deleteItemConfirmed() {
   const currID = currItem.value.id
   users.value.splice(currItem.value, 1)
 
-  axiosInstance.post('/manager/delete/users', {
+  axiosInstance.post('/manager/delete', {
     id: currID,
   }).then((response) => {
     console.log(response)
@@ -227,8 +283,8 @@ function deleteItemConfirmed() {
       prompt.value = '删除成功'
       snackbar.value = true
     } else {
-      console.error('删除失败')
-      prompt.value = '删除失败'
+      console.error('删除失败：', response.data.message)
+      prompt.value = '删除失败：' + response.data.message
       snackbar.value = true
     }
   }).catch((error) => {
@@ -286,7 +342,7 @@ async function loadItems({ page, itemsPerPage, sortBy }) {
   //     others: '',
   //     comments: '',
   //   },],
-  //   pageCount: 1,
+  //  pageCount: 1,
   // }
   pageCount.value = result.pageCount
   const packedData = result.data

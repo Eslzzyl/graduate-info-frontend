@@ -105,10 +105,8 @@ const isErrorHappened = ref(false)
 onMounted(() => {
   axiosInstance.post('/user/list')
     .then((response) => {
-      console.log(response)
       if (response.data.code === 1) {
         gradeList.value = response.data.data.grade
-        console.log(response.data.data.dept)
         deptList.value = response.data.data.dept
       } else {
         console.error(response.data.message)
@@ -120,20 +118,9 @@ onMounted(() => {
       requestError.value = error.message
       isErrorHappened.value = true
     })
-  typeChartData.value = {
-    labels: ['a', 'b'],
-    datasets: [
-      {
-        backgroundColor: getRandomColorList(2),
-        data: [1, 2],
-      },
-    ],
-  }
 })
 
 watch(currDept, () => {
-  console.log(deptList.value)
-  console.log(currDept.value)
   currMajorList.value = deptList.value[currDept.value]
 })
 
@@ -147,9 +134,8 @@ function search() {
     }
   }).then((response) => {
     if (response.data.code === 1) {
-      console.log(response)
-      goneTypeData.value = response.data.type
-      goneData.value = response.data.gone
+      goneTypeData.value = response.data.data.type
+      goneData.value = response.data.data.gone
       formatChartParams()
     } else {
       prompt.value = "服务端请求出错：" + response.data.message

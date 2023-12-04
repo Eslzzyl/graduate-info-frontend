@@ -165,7 +165,8 @@ export function getRandomColorList(count: number): string[] {
   const result: string[] = [];
 
   for (let i = 0; i < count; i++) {
-    const randomIndex = Math.floor(Math.random() * list.length);
+    // const randomIndex = Math.floor(Math.random() * list.length);
+    const randomIndex = i % list.length;
     result.push(list[randomIndex]);
   }
 

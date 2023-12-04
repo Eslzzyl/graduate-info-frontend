@@ -267,7 +267,7 @@ function onSaveItem() {
 
 async function request({ page, itemsPerPage, sortBy, search }) {
   try {
-    const response = axiosInstance.post('/manager/students', {
+    const response = await axiosInstance.post('/manager/students', {
       page: page,
       itemsPerPage: itemsPerPage,
       sortBy: sortBy,

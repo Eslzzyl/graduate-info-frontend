@@ -78,7 +78,7 @@ const typeChartData = ref({
   labels: [],
   datasets: [
     {
-      backgroundColor: [],
+      backgroundColor: getRandomColorList(2),
       data: [],
     },
   ],
@@ -87,7 +87,7 @@ const goneChartData = ref({
   labels: [],
   datasets: [
     {
-      backgroundColor: [],
+      backgroundColor: getRandomColorList(2),
       data: [],
     },
   ],
@@ -120,6 +120,15 @@ onMounted(() => {
       requestError.value = error.message
       isErrorHappened.value = true
     })
+  typeChartData.value = {
+    labels: ['a', 'b'],
+    datasets: [
+      {
+        backgroundColor: getRandomColorList(2),
+        data: [1, 2],
+      },
+    ],
+  }
 })
 
 watch(currDept, () => {
@@ -154,13 +163,25 @@ function search() {
 }
 
 function formatChartParams() {
-  typeChartData.value.labels = Object.keys(goneTypeData.value)
-  typeChartData.value.datasets.backgroundColor = getRandomColorList(Object.keys(goneTypeData.value).length)
-  typeChartData.value.datasets.data = Object.values(goneTypeData.value)
+  typeChartData.value = {
+    labels: Object.keys(goneTypeData.value),
+    datasets: [
+      {
+        backgroundColor: getRandomColorList(Object.keys(goneTypeData.value).length),
+        data: Object.values(goneTypeData.value),
+      },
+    ],
+  }
 
-  goneChartData.value.labels = Object.keys(goneData.value)
-  goneChartData.value.datasets.backgroundColor = getRandomColorList(Object.keys(goneData.value).length)
-  goneChartData.value.datasets.data = Object.values(goneData.value)
+  goneChartData.value = {
+    labels: Object.keys(goneData.value),
+    datasets: [
+      {
+        backgroundColor: getRandomColorList(Object.keys(goneData.value).length),
+        data: Object.values(goneData.value),
+      },
+    ],
+  }
 }
 
 </script>

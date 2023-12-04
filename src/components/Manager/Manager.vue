@@ -62,13 +62,13 @@ import Users from './Users.vue'
 import ManagerAccount from './ManagerAccount.vue'
 import Students from './Students.vue'
 
-import { ref, onMounted } from 'vue'
+import { ref, shallowRef, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 // https://router.vuejs.org/zh/guide/advanced/composition-api.html
 const router = useRouter()
 
-const currentView = ref()
+const currentView = shallowRef()
 const managerName = ref<string | undefined>('')
 const managerAvatar = ref<string | undefined>('')
 

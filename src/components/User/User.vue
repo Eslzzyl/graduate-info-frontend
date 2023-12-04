@@ -67,13 +67,13 @@ import Statistics from './Statistics.vue'
 import UserAccount from './UserAccount.vue'
 import Table from './Table.vue'
 
-import { ref, onMounted } from 'vue'
+import { ref, shallowRef, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 
 // https://router.vuejs.org/zh/guide/advanced/composition-api.html
 const router = useRouter()
 
-const currentView = ref()
+const currentView = shallowRef()
 const studentName = ref<string | undefined>('')
 const studentAvatar = ref<string | undefined>('')
 

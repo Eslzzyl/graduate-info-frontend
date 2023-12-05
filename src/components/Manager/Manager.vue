@@ -84,7 +84,8 @@ function logout() {
 }
 
 onMounted(() => {
-  managerName.value = window.localStorage.getItem("name") ?? '';
+  managerName.value = window.localStorage.getItem("name") as string;
+  managerAvatar.value = window.localStorage.getItem("avatar") as string;
   currentView.value = Users
 })
 

@@ -59,7 +59,11 @@ const idRules = [
     if (value?.length == 10) {
       return true
     } else {
-      return '学号长度有误'
+      if (userType.value === 'user') {
+        return '学号长度有误'
+      } else {
+        return '工号长度有误'
+      }
     }
   },
 ]

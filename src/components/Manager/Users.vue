@@ -272,7 +272,6 @@ watch(page, () => {
 
 function deleteItemConfirmed() {
   const currID = currItem.value.id
-  users.value.splice(currItem.value, 1)
 
   axiosInstance.post('/manager/delete', {
     id: currID,
@@ -281,6 +280,7 @@ function deleteItemConfirmed() {
     if (response.data.code === 1) {
       console.log('删除成功')
       prompt.value = '删除成功'
+      users.value.splice(users.value.indexOf(currItem.value), 1)
       snackbar.value = true
     } else {
       console.error('删除失败：', response.data.message)

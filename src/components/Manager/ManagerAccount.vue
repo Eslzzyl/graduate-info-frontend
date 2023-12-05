@@ -21,7 +21,7 @@
           <v-row>
             <v-col cols="3">
               头像：
-              <v-avatar :image="managerAvatar !== '' ? managerAvatar : '/avatar/alice.jpg'" size="64"></v-avatar>
+              <v-avatar :image="managerAvatar !== '' && managerAvatar !== 'null' ? managerAvatar : '/avatar/alice.jpg'" size="64"></v-avatar>
             </v-col>
           </v-row>
           <v-row>
@@ -160,6 +160,7 @@ function updateAvatar(e: Event) {
     axios.post("https://img.eslzzyl.eu.org/upload", formData)
       .then((response) => {
         managerAvatar.value = response.data
+        window.localStorage.setItem("avatar", managerAvatar.value)
         avatarPrompt.value = "头像上传成功，你仍然需要点击下面的提交按钮来提交更改"
         snackbar.value = true
         console.log("新头像URL：", managerAvatar.value)

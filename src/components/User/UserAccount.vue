@@ -121,7 +121,7 @@
               <v-row>
                 <v-col cols="3">
                   头像：
-                  <v-avatar :image="studentAvatar !== '' ? studentAvatar : '/avatar/chino.jpg'" size="64"></v-avatar>
+                  <v-avatar :image="studentAvatar !== '' && studentAvatar !== 'null' ? studentAvatar : '/avatar/chino.jpg'" size="64"></v-avatar>
                 </v-col>
               </v-row>
               <v-row>
@@ -160,7 +160,7 @@
       </v-fade-transition>
     </v-container>
     <v-snackbar v-model="snackbar" timeout="5000" rounded="pill" color="indigo-lighten-4">
-      {{ avatarPrompt }}
+      {{ prompt }}
       <v-btn variant="text" @click="snackbar = false">关闭</v-btn>
     </v-snackbar>
   </v-container>
@@ -206,7 +206,7 @@ const isUpdateInfoErrorHappened = ref(false)
 const requestError = ref()
 
 const snackbar = ref(false)
-const avatarPrompt = ref('')
+const prompt = ref('')
 
 const emit = defineEmits<{
   (event: 'change-avatar', avatar: string): void
@@ -291,6 +291,8 @@ async function updateInfo() {
     if (response.data.code === 1) {
       console.log('请求成功')
       isUpdateInfoErrorHappened.value = false
+      prompt.value = '更新成功'
+      snackbar.value = true
     } else {
       isUpdateInfoErrorHappened.value = true
       console.error('请求失败！', response.data.message)
@@ -328,14 +330,15 @@ function updateAvatar(e: Event) {
     axios.post("https://img.eslzzyl.eu.org/upload", formData)
       .then((response) => {
         studentAvatar.value = response.data
-        avatarPrompt.value = "头像上传成功，你仍然需要点击下面的提交按钮来提交更改"
+        window.localStorage.setItem("avatar", studentAvatar.value)
+        prompt.value = "头像上传成功，你仍然需要点击下面的提交按钮来提交更改"
         snackbar.value = true
         console.log("新头像URL：", studentAvatar.value)
         isSelectingAvatar.value = false
         emit('change-avatar', studentAvatar.value)
       }).catch((error) => {
         console.error('上传头像时遇到问题：', error)
-        avatarPrompt.value = "上传头像时遇到问题：" + error.message
+        prompt.value = "上传头像时遇到问题：" + error.message
         snackbar.value = true
         isSelectingAvatar.value = false
         return

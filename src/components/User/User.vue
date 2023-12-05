@@ -90,6 +90,7 @@ function logout() {
 
 onMounted(() => {
   studentName.value = window.localStorage.getItem("name") as string;
+  studentAvatar.value = window.localStorage.getItem("avatar") as string;
   currentView.value = Home
 })
 

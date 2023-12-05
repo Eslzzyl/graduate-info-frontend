@@ -252,6 +252,8 @@ function onSaveItem() {
     if (response.data.code === 1) {
       prompt.value = "保存成功"
       snackbar.value = true
+      students.value.splice(students.value.indexOf(currItem.value), 1)
+      currItem.value = null
     } else {
       prompt.value = "保存失败：" + response.data.message
       snackbar.value = true
@@ -262,7 +264,7 @@ function onSaveItem() {
     isErrorHappened.value = true
   })
   
-  currItem.value = null
+  dialogAdd.value = false
 }
 
 async function request({ page, itemsPerPage, sortBy, search }) {

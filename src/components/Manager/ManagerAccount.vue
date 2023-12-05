@@ -101,7 +101,12 @@ onMounted(() => {
 })
 
 async function updateInfo() {
-  const hashed_password = calculate_sha256(newPassword.value);
+  let hashed_password;
+  if (newPassword.value != '') {
+    hashed_password = calculate_sha256(newPassword.value);
+  } else {
+    hashed_password = window.localStorage.getItem("hashed_password");
+  }
   axiosInstance.post('/manager/updateinfo', {
       id: managerID.value,
       avatar: managerAvatar.value,
